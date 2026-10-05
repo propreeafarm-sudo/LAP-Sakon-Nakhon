@@ -237,6 +237,44 @@ dialog::backdrop{background:rgba(8,14,32,.5)}
 #toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:#0f1a33;color:#fff;padding:10px 16px;border-radius:8px;font-size:14px;z-index:120;opacity:0;transition:opacity .2s;pointer-events:none;max-width:calc(100vw - 32px)}
 #toast.on{opacity:1}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* ---- v3: auth, roles, certs, survey ---- */
+#auth{padding-block:32px 48px}
+.authcard{max-width:520px;margin:0 auto;background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:26px;display:grid;gap:16px}
+.authcard h2{font-size:21px}
+.authcard .fld input{font-size:16px;padding:10px 12px}
+.authcard .btn{padding:11px 16px;font-size:15px}
+.pdpa{font-size:13px;color:var(--ink-2);background:var(--t-blue);border-radius:10px;padding:12px 14px;display:grid;gap:8px}
+.pdpa label{display:flex;gap:8px;align-items:flex-start;font-weight:500;color:var(--ink)}
+.pdpa input{margin-top:4px;width:16px;height:16px;flex:none}
+.linkbtn{background:none;border:0;padding:0;color:var(--accent);cursor:pointer;text-decoration:underline;font-size:inherit}
+.err{color:var(--crit-ink);background:var(--crit-bg);padding:8px 12px;border-radius:8px;font-size:13.5px}
+.userchip{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);padding:8px 10px 8px 14px;border-radius:12px;color:#fff}
+.userchip .who2{display:grid;line-height:1.3}
+.userchip b{font-family:var(--f-display);font-size:14.5px}
+.userchip span{font-size:12px;color:#c9d6f2}
+.userchip button{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);color:#fff;border-radius:8px;padding:5px 10px;cursor:pointer;font-size:13px}
+.userchip button:hover{background:rgba(255,255,255,.26)}
+.rolegrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:14px}
+.role{border-radius:12px;padding:16px;border:1px solid var(--line);border-top:4px solid var(--rc)}
+.role h3{font-size:16px;margin-bottom:6px}
+.role ul{margin:0;padding-left:18px;font-size:13.5px;color:var(--ink-2);display:grid;gap:3px}
+.role .no{color:var(--muted)}
+.codein{width:120px;border:1px solid var(--line-strong);border-radius:6px;padding:4px 8px;background:var(--surface);font-family:var(--f-mono);font-size:13.5px}
+.rowsel{width:18px;height:18px}
+.certlist{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.certpill{display:inline-flex;align-items:center;gap:6px;background:var(--t-teal);color:var(--i-teal);border-radius:8px;padding:2px 4px 2px 10px;font-size:12.5px}
+.certpill.nofile{background:var(--neutral-bg);color:var(--ink-2);padding-right:10px}
+.certpill button{border:0;background:rgba(0,0,0,.08);color:inherit;border-radius:6px;cursor:pointer;padding:1px 7px;font-size:12px}
+.uplog{font-size:13px;display:grid;gap:4px;margin-top:12px;max-height:220px;overflow:auto}
+.uplog .ok{color:var(--good-ink)} .uplog .bad{color:var(--crit-ink)}
+.svbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.svbar select,.svbar input{border:1px solid var(--line-strong);background:var(--surface);border-radius:8px;padding:7px 10px;font-size:14px}
+.planin{border:1px solid var(--line-strong);border-radius:6px;padding:4px 6px;background:var(--surface);font-size:13px;width:100%;min-width:170px}
+.stack{display:grid;gap:5px}
+.notice{font-size:13.5px;line-height:1.7;color:var(--ink-2)}
+.notice h3{font-size:15px;margin:12px 0 2px;color:var(--ink)}
+.notice ul{margin:2px 0;padding-left:20px}
 </style>
 </head>
 <body>
@@ -250,17 +288,54 @@ dialog::backdrop{background:rgba(8,14,32,.5)}
       <div class="sub">บำรุงรักษาเชิงป้องกัน (PM) และสอบเทียบ (Calibration) ตามมาตรฐานบริการสุขภาพปฐมภูมิ</div>
     </div>
     <div class="roundchip"><span>รอบข้อมูลที่แสดง</span><b id="roundLabel">มี.ค.–เม.ย. 2568</b><span id="roundSrc">รายงานผู้รับจ้าง + ทะเบียนที่ปรับปรุง</span></div>
+    <div class="userchip" id="userChip" hidden><div class="who2"><b id="ucName"></b><span id="ucRole"></span></div><button id="ucPw">เปลี่ยนรหัสผ่าน</button><button id="ucOut">ออกจากระบบ</button></div>
   </header>
 </div></div>
 
+<div id="auth"><div class="wrap">
+  <div class="authcard" id="authWait"><h2>กำลังเตรียมระบบ…</h2><div class="hint">กำลังเชื่อมต่อที่เก็บข้อมูล</div></div>
+
+  <form class="authcard" id="authSetup" hidden autocomplete="off">
+    <div><h2>ตั้งค่าครั้งแรก: บัญชีผู้ดูแลระบบ</h2><div class="hint">สำหรับกองสาธารณสุข อบจ.สกลนคร ระบบยังไม่มีบัญชีผู้ดูแล กรุณากำหนดก่อนเริ่มใช้งาน</div></div>
+    <div class="fld"><label for="suUser">ชื่อผู้ใช้ผู้ดูแล (อังกฤษ/ตัวเลข)</label><input id="suUser" required pattern="[A-Za-z0-9_.\-]{3,30}" value="admin"></div>
+    <div class="fld"><label for="suPw">รหัสผ่าน (อย่างน้อย 8 ตัวอักษร)</label><input id="suPw" type="password" required minlength="8"></div>
+    <div class="fld"><label for="suPw2">ยืนยันรหัสผ่าน</label><input id="suPw2" type="password" required minlength="8"></div>
+    <div class="err" id="suErr" hidden></div>
+    <button class="btn primary" type="submit">สร้างบัญชีผู้ดูแลและเข้าสู่ระบบ</button>
+  </form>
+
+  <form class="authcard" id="authLogin" hidden autocomplete="off">
+    <div><h2>เข้าสู่ระบบ</h2><div class="hint">รพ.สต. ใช้รหัสสถานพยาบาล 5 หลักเป็นชื่อผู้ใช้ · กองสาธารณสุขใช้บัญชีผู้ดูแล</div></div>
+    <div class="fld"><label for="liUser">ชื่อผู้ใช้ (รหัสสถานพยาบาล)</label><input id="liUser" required inputmode="text" autocapitalize="off"></div>
+    <div class="fld"><label for="liPw">รหัสผ่าน</label><input id="liPw" type="password" required></div>
+    <div class="pdpa">
+      <div>ระบบนี้เก็บชื่อผู้ใช้ เวลาเข้าใช้งาน และประวัติการแก้ไขข้อมูล เพื่อการกำกับติดตามเครื่องมือแพทย์และตรวจสอบย้อนหลัง ตาม พ.ร.บ.คุ้มครองข้อมูลส่วนบุคคล พ.ศ. 2562 <button type="button" class="linkbtn" data-open-privacy>อ่านประกาศความเป็นส่วนตัว</button></div>
+      <label><input type="checkbox" id="liAck" required>ข้าพเจ้ารับทราบประกาศความเป็นส่วนตัว และจะใช้ข้อมูลเฉพาะในหน้าที่ที่ได้รับมอบหมาย</label>
+    </div>
+    <div class="err" id="liErr" hidden></div>
+    <button class="btn primary" type="submit">เข้าสู่ระบบ</button>
+  </form>
+
+  <form class="authcard" id="authChange" hidden autocomplete="off">
+    <div><h2>ตั้งรหัสผ่านใหม่</h2><div class="hint" id="chHint">เข้าใช้ครั้งแรกต้องเปลี่ยนรหัสผ่าน เพราะรหัสสถานพยาบาลเป็นข้อมูลที่บุคคลทั่วไปค้นหาได้</div></div>
+    <div class="fld"><label for="chPw">รหัสผ่านใหม่ (อย่างน้อย 8 ตัวอักษร)</label><input id="chPw" type="password" required minlength="8"></div>
+    <div class="fld"><label for="chPw2">ยืนยันรหัสผ่านใหม่</label><input id="chPw2" type="password" required minlength="8"></div>
+    <div class="err" id="chErr" hidden></div>
+    <div class="actions"><button class="btn primary" type="submit">บันทึกรหัสผ่าน</button><button class="btn" type="button" id="chCancel">ยกเลิก</button></div>
+  </form>
+</div></div>
+
+<div id="appRoot" hidden>
 <nav class="tabs" aria-label="ส่วนของรายงาน"><div class="wrap"><div class="in" role="tablist">
-  <button role="tab" data-tab="overview" aria-selected="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h4l3 8 4-16 3 8h4"/></svg>ภาพรวมผู้บริหาร</button>
-  <button role="tab" data-tab="facilities" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V8l7-5 7 5v13M10 13h4M12 11v4"/></svg>รายหน่วยบริการ</button>
+  <button role="tab" data-tab="overview" aria-selected="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h4l3 8 4-16 3 8h4"/></svg><span class="tl">ภาพรวมผู้บริหาร</span></button>
+  <button role="tab" data-tab="facilities" data-roles="admin" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V8l7-5 7 5v13M10 13h4M12 11v4"/></svg>รายหน่วยบริการ</button>
   <button role="tab" data-tab="inventory" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>ทะเบียนเครื่องมือ</button>
-  <button role="tab" data-tab="types" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>รายประเภท</button>
+  <button role="tab" data-tab="cert" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 13l2 2 4-4"/></svg>ใบ cer</button>
+  <button role="tab" data-tab="types" data-roles="admin" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>รายประเภท</button>
   <button role="tab" data-tab="capa" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2.5-.5-.5-2.5z"/></svg>ติดตามแก้ไข<span class="badge" id="capaBadge">–</span></button>
-  <button role="tab" data-tab="plan" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>แผนปีงบ 2570</button>
-  <button role="tab" data-tab="data" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg>นำเข้า / ส่งออก</button>
+  <button role="tab" data-tab="plan" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>สำรวจประจำปี / แผน</button>
+  <button role="tab" data-tab="data" data-roles="admin" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg>นำเข้า / ส่งออก</button>
+  <button role="tab" data-tab="users" data-roles="admin" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.6-3.5 3.2-5.5 6.5-5.5s5.900 2 6.500 5.500M16 5.200a3.300 3.300 0 0 1 0 6.200M18.500 14.800c1.700.800 2.700 2.500 3 5.200"/></svg>ผู้ใช้และสิทธิ์</button>
 </div></div></nav>
 
 <div class="wrap">
@@ -300,7 +375,7 @@ dialog::backdrop{background:rgba(8,14,32,.5)}
         <div class="hbars" id="catBars"></div>
         <div class="axisnote"><span>เส้นประ = ค่าเฉลี่ยทั้งจังหวัด</span></div>
       </div>
-      <div class="panel">
+      <div class="panel" data-roles="admin">
         <div class="phead"><div><h2><span class="ico" style="background:var(--t-teal);color:var(--i-teal)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></span>ร้อยละผ่านเกณฑ์ ตามโซน</h2><div class="hint">โซนตามรหัส PCU ในรหัสเครื่อง (เช่น PCU<b>9</b>/3)</div></div></div>
         <div class="hbars" id="zoneBars"></div>
         <div class="axisnote"><span>แกนเริ่มที่ 90%</span><span>เส้นประ = เป้าหมาย</span><span><i class="sw" style="background:var(--c3)"></i>ถึงเป้า</span><span><i class="sw" style="background:var(--c8)"></i>ต่ำกว่าเป้า</span></div>
@@ -342,7 +417,7 @@ dialog::backdrop{background:rgba(8,14,32,.5)}
         <div class="actions">
           <button class="btn primary" id="invAdd"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 5v14M5 12h14"/></svg>เพิ่มเครื่องมือ</button>
           <button class="btn" id="invSurvey"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg>แบบสำรวจของแห่งนี้</button>
-          <button class="btn gold" id="invNewFac"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V8l7-5 7 5v13"/><path d="M12 10v6M9 13h6"/></svg>เพิ่ม รพ.สต. รับโอนใหม่</button>
+          <button class="btn gold" id="invNewFac" data-roles="admin"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V8l7-5 7 5v13"/><path d="M12 10v6M9 13h6"/></svg>เพิ่ม รพ.สต. รับโอนใหม่</button>
         </div>
       </div>
       <div class="facstats" id="invStats"></div>
@@ -363,6 +438,82 @@ dialog::backdrop{background:rgba(8,14,32,.5)}
         <select id="invSrc" aria-label="ที่มาข้อมูล"><option value="">ทุกที่มา</option><option value="base">ข้อมูลผู้รับจ้าง</option><option value="edited">แก้ไขแล้ว</option><option value="new">เพิ่มใหม่</option></select>
       </div>
       <div class="tbl-wrap"><table id="invTable"><thead><tr><th>รหัสเครื่อง</th><th>ประเภท</th><th>ยี่ห้อ / รุ่น / S/N</th><th>เลขครุภัณฑ์</th><th>ได้มา / แหล่งงบ</th><th>ผล</th><th>ที่มา</th><th></th></tr></thead><tbody></tbody></table></div>
+    </div>
+
+    <div class="panel">
+      <div class="phead"><div><h2><span class="ico" style="background:var(--t-red);color:var(--i-red)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></svg></span>เครื่องมือที่นำออกจากระบบ</h2><div class="hint">ประวัติการนำออกพร้อมสาเหตุ · นำออกได้จากปุ่ม “แก้ไข” ของแต่ละเครื่อง</div></div><span class="count" id="rmCount"></span></div>
+      <div class="tbl-wrap"><table id="rmTable"><thead><tr><th>รหัสเครื่อง</th><th>ประเภท</th><th>สาเหตุ</th><th>วันที่ / เลขที่หนังสือ</th><th>ผู้บันทึก</th><th></th></tr></thead><tbody></tbody></table></div>
+    </div>
+  </section>
+
+  <!-- CERT -->
+  <section class="view" id="v-cert" hidden>
+    <div class="panel">
+      <div class="phead"><div><h2><span class="ico" style="background:var(--t-teal);color:var(--i-teal)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 13l2 2 4-4"/></svg></span>ใบรับรองผลการสอบเทียบ (Certificate)</h2><div class="hint">อัปโหลดไฟล์ PDF ใบ cer ของแต่ละเครื่อง และออกรายงานความครบถ้วน</div></div><button class="btn primary" id="certExport">ออกรายงานใบ cer (.xlsx)</button></div>
+      <div class="kpis" style="grid-template-columns:repeat(auto-fit,minmax(min(100%,190px),1fr))" id="certKpis"></div>
+    </div>
+    <div class="panel">
+      <div class="phead"><div><h2>อัปโหลดใบ cer</h2><div class="hint">เลือกได้หลายไฟล์พร้อมกัน ระบบจับคู่กับเครื่องจากชื่อไฟล์ของผู้รับจ้าง เช่น <span class="mono">BPA-PCU7-4-0126PAO_SN04260260.pdf</span> = เครื่อง <span class="mono">BPA-PCU7/4-01</span> ใบรับรองเลขที่ <span class="mono">26PAO_SN04260260</span></div></div></div>
+      <label class="drop" id="certDrop" for="certFiles"><b>ลากไฟล์ PDF ใบ cer มาวาง หรือคลิกเพื่อเลือก</b><span class="hint">ไฟล์ที่ชื่อไม่ตรงรูปแบบ ให้กด “แนบไฟล์” ที่แถวของเครื่องนั้นในตารางด้านล่าง</span><input type="file" id="certFiles" accept="application/pdf,.pdf" multiple hidden></label>
+      <div id="certStoreNote" class="syncnote" style="margin-top:12px"></div>
+      <div class="uplog" id="certLog"></div>
+    </div>
+    <div class="panel" data-roles="admin">
+      <div class="phead"><div><h2>ความครบถ้วนรายหน่วยบริการ</h2><div class="hint">คลิกแถวเพื่อดูรายเครื่องของแห่งนั้น</div></div>
+        <div class="seg" id="certSeg"><button data-v="all" aria-pressed="true">ทั้งหมด</button><button data-v="missing" aria-pressed="false">ยังไม่ครบ</button></div></div>
+      <div class="tbl-wrap" style="max-height:420px;overflow:auto"><table id="certFacTable"><thead><tr><th>รพ.สต.</th><th>โซน</th><th class="r">เครื่องมือ</th><th class="r">มีไฟล์ใบ cer</th><th>ความครบถ้วน</th></tr></thead><tbody></tbody></table></div>
+    </div>
+    <div class="panel">
+      <div class="phead"><div><h2 id="certTitle">ใบ cer รายเครื่อง</h2><div class="hint">“เลขใบรับรองในระบบ” มาจากรายงานผู้รับจ้างรอบ 2568</div></div><span class="count" id="certCount"></span></div>
+      <div class="filters">
+        <select id="certFac" aria-label="รพ.สต."></select>
+        <input type="search" id="certSearch" placeholder="ค้นหารหัสเครื่อง / ประเภท / เลขใบรับรอง" aria-label="ค้นหาใบ cer">
+        <select id="certHas" aria-label="สถานะไฟล์"><option value="">ทุกสถานะ</option><option value="1">มีไฟล์แล้ว</option><option value="0">ยังไม่มีไฟล์</option></select>
+      </div>
+      <div class="tbl-wrap"><table id="certTable"><thead><tr><th>รหัสเครื่อง</th><th>ประเภท</th><th>ผล</th><th>เลขใบรับรองในระบบ</th><th>ใบ cer ที่แนบ</th><th></th></tr></thead><tbody></tbody></table></div>
+    </div>
+  </section>
+
+  <!-- USERS -->
+  <section class="view" id="v-users" hidden>
+    <div class="panel">
+      <div class="phead"><div><h2>บทบาทและสิทธิ์การเข้าถึงข้อมูล</h2><div class="hint">กำหนดตามหลักให้สิทธิ์เท่าที่จำเป็นต่อหน้าที่ (need-to-know)</div></div><button class="btn" data-open-privacy>ประกาศความเป็นส่วนตัว</button></div>
+      <div class="rolegrid">
+        <div class="role" style="--rc:var(--c3)"><h3>รพ.สต. (ผู้ใช้ระดับหน่วยบริการ)</h3><ul>
+          <li>เห็นเฉพาะข้อมูลของ รพ.สต. ตนเอง</li><li>เพิ่ม/แก้ไขทะเบียนเครื่องมือ นำเข้าแบบสำรวจ Excel ของตนเอง</li><li>นำเครื่องออกจากระบบ พร้อมระบุสาเหตุ</li><li>บันทึกแนวทางแก้ไขเครื่องที่สอบเทียบไม่ผ่าน</li><li>อัปโหลดและเปิดดูใบ cer ของตนเอง</li><li>กรอกและส่งแบบสำรวจเครื่องมือส่งสอบเทียบประจำปี</li><li>เปลี่ยนรหัสผ่านของตนเอง</li>
+          <li class="no">ไม่เห็นข้อมูล รพ.สต. อื่น ภาพรวมจังหวัด บัญชีผู้ใช้ และประวัติการใช้งาน</li><li class="no">ไม่สามารถปิดงานแก้ไข หรือนำเครื่องที่นำออกแล้วกลับเข้าระบบ</li></ul></div>
+        <div class="role" style="--rc:var(--c1)"><h3>กองสาธารณสุข อบจ. (ผู้ดูแลระบบ)</h3><ul>
+          <li>เห็นและแก้ไขข้อมูลทุก รพ.สต. รวมภาพรวมจังหวัดและรายงานผู้บริหาร</li><li>กำหนดรหัสสถานพยาบาล รีเซ็ตรหัสผ่าน ปลดล็อกบัญชี เพิ่มผู้ดูแล</li><li>เปลี่ยนสถานะและปิดงานแก้ไข (CAPA)</li><li>นำเครื่องที่นำออกแล้วกลับเข้าระบบ เพิ่ม รพ.สต. รับโอนใหม่</li><li>เปิด/ปิดรอบสำรวจประจำปี และสรุปจำนวนเครื่องเพื่อจัดจ้าง</li><li>นำเข้าผลของผู้รับจ้าง ส่งออกรายงาน สำรอง/กู้คืนข้อมูล</li><li>ดูและส่งออกประวัติการใช้งาน (Audit log)</li></ul></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="phead"><div><h2>บัญชี รพ.สต.</h2><div class="hint">ชื่อผู้ใช้และรหัสผ่านเริ่มต้น = รหัสสถานพยาบาล 5 หลัก · กรอกทีละแห่งหรือนำเข้าจาก Excel</div></div><span class="count" id="usrCount"></span></div>
+      <div class="filters">
+        <input type="search" id="usrSearch" placeholder="ค้นหาชื่อ รพ.สต. หรือรหัส" aria-label="ค้นหาบัญชี">
+        <button class="btn" id="usrTpl">ดาวน์โหลดแบบกรอกรหัส (.xlsx)</button>
+        <label class="btn" for="usrFile">นำเข้ารหัสจาก Excel</label><input type="file" id="usrFile" accept=".xlsx" hidden>
+        <button class="btn primary" id="usrSaveAll">บันทึกรหัสที่กรอก</button>
+      </div>
+      <label style="display:flex;gap:8px;align-items:center;font-size:14px;margin-bottom:12px"><input type="checkbox" id="cfgForce" class="rowsel"> บังคับให้ รพ.สต. เปลี่ยนรหัสผ่านเมื่อเข้าใช้ครั้งแรก (แนะนำ เพราะรหัสสถานพยาบาลเป็นข้อมูลสาธารณะ)</label>
+      <div id="usrMsg" class="hint" style="margin-bottom:10px"></div>
+      <div class="tbl-wrap" style="max-height:520px;overflow:auto"><table id="usrTable"><thead><tr><th>รพ.สต.</th><th>โซน</th><th>รหัสสถานพยาบาล (ชื่อผู้ใช้)</th><th>สถานะบัญชี</th><th>เข้าใช้ล่าสุด</th><th></th></tr></thead><tbody></tbody></table></div>
+    </div>
+
+    <div class="panel">
+      <div class="phead"><div><h2>บัญชีผู้ดูแล (กองสาธารณสุข)</h2><div class="hint">ควรมีอย่างน้อย 2 บัญชี และไม่ใช้บัญชีร่วมกัน เพื่อให้ตรวจสอบย้อนหลังได้</div></div></div>
+      <form class="filters" id="admForm" autocomplete="off">
+        <input id="admUser" placeholder="ชื่อผู้ใช้ใหม่" pattern="[A-Za-z0-9_.\-]{3,30}" required aria-label="ชื่อผู้ใช้ผู้ดูแลใหม่">
+        <input id="admPw" type="password" placeholder="รหัสผ่าน (≥ 8 ตัว)" minlength="8" required aria-label="รหัสผ่านผู้ดูแลใหม่">
+        <button class="btn" type="submit">เพิ่มผู้ดูแล</button>
+      </form>
+      <div class="tbl-wrap"><table id="admTable"><thead><tr><th>ชื่อผู้ใช้</th><th>เข้าใช้ล่าสุด</th><th></th></tr></thead><tbody></tbody></table></div>
+    </div>
+
+    <div class="panel">
+      <div class="phead"><div><h2>ประวัติการใช้งาน (Audit log)</h2><div class="hint">บันทึกการเข้าใช้และการเปลี่ยนแปลงข้อมูล 300 รายการล่าสุด</div></div><button class="btn" id="logExport">ส่งออก (.xlsx)</button></div>
+      <div class="filters"><input type="search" id="logSearch" placeholder="ค้นหาผู้ใช้ / การกระทำ" aria-label="ค้นหาประวัติ"></div>
+      <div class="tbl-wrap" style="max-height:420px;overflow:auto"><table id="logTable"><thead><tr><th>วันเวลา</th><th>ผู้ใช้</th><th>บทบาท</th><th>การกระทำ</th><th>รายละเอียด</th></tr></thead><tbody></tbody></table></div>
     </div>
   </section>
 
@@ -395,7 +546,7 @@ dialog::backdrop{background:rgba(8,14,32,.5)}
   <!-- CAPA -->
   <section class="view" id="v-capa" hidden>
     <div class="panel">
-      <div class="phead"><div><h2>ติดตามการแก้ไขเครื่องที่ไม่ผ่าน (CAPA)</h2><div class="hint">เปลี่ยนสถานะแล้วบันทึกทันที · คลิกกล่องเพื่อกรองตามขั้น</div></div><div id="syncNote" class="syncnote">กำลังเชื่อมต่อ…</div></div>
+      <div class="phead"><div><h2>ติดตามการแก้ไขเครื่องที่ไม่ผ่าน (CAPA)</h2><div class="hint">รพ.สต. ระบุแนวทางแก้ไข · กองสาธารณสุขติดตามและปิดงาน · บันทึกทันทีเมื่อแก้ไข</div></div><div id="syncNote" class="syncnote">กำลังเชื่อมต่อ…</div></div>
       <div class="pipeline" id="pipeline"></div>
     </div>
     <div class="panel">
@@ -406,7 +557,7 @@ dialog::backdrop{background:rgba(8,14,32,.5)}
         <span class="count" id="capaCount"></span>
       </div>
       <div class="tbl-wrap"><table id="capaTable"><thead><tr>
-        <th>ลำดับ</th><th>รพ.สต. / เครื่องมือ</th><th>ปัญหาที่พบ</th><th>ความสำคัญ</th><th>สถานะการแก้ไข</th><th>บันทึกการดำเนินการ</th>
+        <th>ลำดับ</th><th>รพ.สต. / เครื่องมือ</th><th>ปัญหาที่พบ</th><th>ความสำคัญ</th><th>แนวทางแก้ไขของ รพ.สต.</th><th>สถานะ / บันทึกกองสาธารณสุข</th>
       </tr></thead><tbody></tbody></table></div>
     </div>
   </section>
@@ -414,6 +565,47 @@ dialog::backdrop{background:rgba(8,14,32,.5)}
   <!-- PLAN -->
   <section class="view" id="v-plan" hidden>
     <div class="panel">
+      <div class="phead"><div><h2><span class="ico" style="background:var(--t-violet);color:var(--i-violet)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 9l2 2 4-4M8 16h8"/></svg></span>แบบสำรวจเครื่องมือส่งสอบเทียบ ประจำปีงบประมาณ</h2><div class="hint">รพ.สต. ยืนยันทุกปีว่าจะส่งเครื่องใดเข้าสอบเทียบ กองสาธารณสุขใช้ยอดรวมกำหนดขอบเขตจัดจ้าง</div></div>
+        <div class="svbar"><label for="svYear" class="hint">ปีงบประมาณ</label><select id="svYear"></select><span id="svState"></span></div></div>
+      <div class="svbar" data-roles="admin" style="margin-bottom:6px">
+        <input id="svNewYear" type="number" min="2570" max="2600" placeholder="ปีงบ เช่น 2571" style="width:150px" aria-label="ปีงบประมาณใหม่">
+        <button class="btn" id="svOpenNew">เปิดรอบสำรวจปีใหม่</button>
+        <input id="svDeadline" placeholder="กำหนดส่ง เช่น 30 พ.ย. 2569" style="width:210px" aria-label="กำหนดส่ง">
+        <button class="btn" id="svSaveDl">บันทึกกำหนดส่ง</button>
+        <button class="btn" id="svToggle">ปิดรับแบบสำรวจ</button>
+        <button class="btn primary" id="svExport">สรุปเพื่อจัดจ้าง (.xlsx)</button>
+      </div>
+      <div class="kpis" data-roles="admin" style="grid-template-columns:repeat(auto-fit,minmax(min(100%,190px),1fr));margin-top:14px" id="svKpis"></div>
+    </div>
+
+    <div class="grid2" data-roles="admin">
+      <div class="panel">
+        <div class="phead"><div><h2>สถานะการส่งแบบสำรวจ</h2><div class="hint">คลิกแถวเพื่อเปิดแบบของแห่งนั้น (กรอกแทนได้)</div></div>
+          <div class="seg" id="svSeg"><button data-v="all" aria-pressed="true">ทั้งหมด</button><button data-v="no" aria-pressed="false">ยังไม่ส่ง</button></div></div>
+        <div class="tbl-wrap" style="max-height:420px;overflow:auto"><table id="svFacTable"><thead><tr><th>รพ.สต.</th><th>สถานะ</th><th class="r">ส่ง</th><th class="r">ไม่ส่ง</th><th>วันที่ส่ง</th></tr></thead><tbody></tbody></table></div>
+      </div>
+      <div class="panel">
+        <div class="phead"><div><h2>จำนวนเครื่องที่จะส่ง ตามประเภท</h2><div class="hint">แห่งที่ยังไม่ส่งแบบ นับทุกเครื่องในทะเบียนเป็นค่าประมาณ</div></div></div>
+        <div class="tbl-wrap" style="max-height:420px;overflow:auto"><table id="svTypeTable"><thead><tr><th>ประเภทเครื่องมือ</th><th class="r">ยืนยันแล้ว</th><th class="r">ประมาณ (ยังไม่ส่งแบบ)</th><th class="r">รวม</th></tr></thead><tbody></tbody></table></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="phead"><div><h2 id="svFormTitle">แบบสำรวจของ รพ.สต.</h2><div class="hint">ติ๊กเครื่องที่จะส่งสอบเทียบ เครื่องที่ไม่ส่งให้ระบุเหตุผล · เครื่องใหม่ให้เพิ่มที่แท็บ “ทะเบียนเครื่องมือ” ก่อน แล้วจะขึ้นในรายการนี้</div></div><span id="svFormState"></span></div>
+      <div class="filters">
+        <select id="svFac" aria-label="รพ.สต." data-roles="admin"></select>
+        <button class="btn sm" id="svAll">เลือกทั้งหมด</button><button class="btn sm" id="svNone">ไม่เลือกทั้งหมด</button>
+        <span class="count" id="svCount"></span>
+      </div>
+      <div class="tbl-wrap"><table id="svTable"><thead><tr><th>ส่ง</th><th>รหัสเครื่อง</th><th>ประเภท</th><th>ยี่ห้อ / รุ่น</th><th>ผลล่าสุด</th><th>เหตุผลที่ไม่ส่ง</th></tr></thead><tbody></tbody></table></div>
+      <div class="form" style="margin-top:16px">
+        <div class="fld"><label for="svRep">ผู้รายงาน (ชื่อ–ตำแหน่ง) · กรอกตามสมัครใจ</label><input id="svRep"></div>
+        <div class="fld"><label for="svPhone">เบอร์ติดต่อ · กรอกตามสมัครใจ</label><input id="svPhone" inputmode="tel"></div>
+        <div class="fld full"><label for="svNote">หมายเหตุถึงกองสาธารณสุข</label><textarea id="svNote" rows="2"></textarea></div>
+      </div>
+      <div class="formfoot"><span class="hint">ชื่อและเบอร์ติดต่อใช้เพื่อประสานงานการสอบเทียบเท่านั้น</span><div class="actions"><button class="btn" id="svDraft">บันทึกร่าง</button><button class="btn primary" id="svSubmit">ส่งแบบสำรวจ</button></div></div>
+    </div>
+    <div class="panel" data-roles="admin">
       <div class="phead"><div><h2>รองรับการถ่ายโอนเพิ่ม 19 แห่ง</h2><div class="hint">ประมาณการจากค่าเฉลี่ยเครื่องมือต่อ รพ.สต. · แก้ตัวเลขได้</div></div></div>
       <div class="calc">
         <div class="fld"><label for="pCur">รพ.สต. ปัจจุบัน (แห่ง)</label><input id="pCur" type="number" min="0" inputmode="numeric"></div>
@@ -424,7 +616,7 @@ dialog::backdrop{background:rgba(8,14,32,.5)}
       </div>
       <div class="kpis" style="grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));margin-top:18px" id="planOut"></div>
     </div>
-    <div class="panel">
+    <div class="panel" data-roles="admin">
       <div class="phead"><div><h2>วงจรงานประจำปี</h2><div class="hint">ลำดับขั้นที่เสนอให้ใช้ทุกปีงบประมาณ</div></div></div>
       <ol class="cycle">
         <li style="--cc:var(--c1)"><div class="m">ต.ค.–พ.ย.</div><b>1 · สำรวจทะเบียน</b><p>ส่งแบบสำรวจที่เติมข้อมูลเดิมให้ทุก รพ.สต. กรอกกลับแล้วนำเข้าที่แท็บทะเบียน</p></li>
@@ -435,7 +627,7 @@ dialog::backdrop{background:rgba(8,14,32,.5)}
         <li style="--cc:var(--c2)"><div class="m">ส.ค.–ก.ย.</div><b>6 · ทบทวน</b><p>วิเคราะห์ประเภทที่ไม่ผ่านซ้ำ ใช้วางแผนจัดซื้อและงบปีถัดไป</p></li>
       </ol>
     </div>
-    <div class="panel">
+    <div class="panel" data-roles="admin">
       <div class="phead"><div><h2>ค่าเป้าหมายตัวชี้วัด</h2><div class="hint">ปรับให้ตรงกับเกณฑ์ที่หน่วยงานใช้ (จำไว้ในเบราว์เซอร์นี้)</div></div></div>
       <div class="calc" id="targets"></div>
       <p class="hint" style="margin-top:14px">อ้างอิงแนวทาง: คู่มือคุณภาพมาตรฐานบริการสุขภาพปฐมภูมิ พ.ศ. 2566 และแนวทางการปฏิบัติงานด้านห้องปฏิบัติการปฐมภูมิ ซึ่งกำหนดให้เครื่องมือแพทย์ได้รับการบำรุงรักษาและสอบเทียบตามรอบ และมีการควบคุมคุณภาพเครื่องตรวจ ณ จุดบริการ (POCT)</p>
@@ -472,6 +664,8 @@ dialog::backdrop{background:rgba(8,14,32,.5)}
   <div class="foot"><span>ข้อมูลจากรายงานผลการดำเนินการ PM และสอบเทียบเครื่องมือแพทย์ อบจ.สกลนคร</span><span id="footStamp"></span></div>
 </div>
 
+</div><!-- /appRoot -->
+
 <dialog id="dlg" aria-labelledby="dlgTitle">
   <div class="dlg-h"><div><div class="hint" id="dlgEyebrow"></div><h2 id="dlgTitle" style="font-size:20px"></h2><div class="hint" id="dlgSub"></div></div>
   <div class="actions"><button class="btn" id="dlgEdit">แก้ไขทะเบียนแห่งนี้</button><button class="x" id="dlgClose" aria-label="ปิด">×</button></div></div>
@@ -495,7 +689,7 @@ dialog::backdrop{background:rgba(8,14,32,.5)}
         <div class="fld full"><label for="edRemark">ปัญหาที่พบ (กรณีไม่ผ่าน/ชำรุด)</label><input id="edRemark"></div>
         <div class="fld full"><label for="edNote">หมายเหตุ</label><textarea id="edNote" rows="2"></textarea></div>
       </div>
-      <div class="formfoot"><div><button type="button" class="btn danger" id="edDel">ลบออกจากทะเบียน</button></div><div class="actions"><button type="button" class="btn" id="edCancel">ยกเลิก</button><button type="submit" class="btn primary">บันทึก</button></div></div>
+      <div class="formfoot"><div><button type="button" class="btn danger" id="edDel">นำออกจากระบบ…</button></div><div class="actions"><button type="button" class="btn" id="edCancel">ยกเลิก</button><button type="submit" class="btn primary">บันทึก</button></div></div>
     </div>
   </form>
 </dialog>
@@ -512,6 +706,58 @@ dialog::backdrop{background:rgba(8,14,32,.5)}
     </div>
   </form>
 </dialog>
+
+<dialog id="rdlg" class="sm" aria-labelledby="rdTitle">
+  <form id="rdForm">
+    <div class="dlg-h"><div><div class="hint" id="rdItem"></div><h2 id="rdTitle" style="font-size:19px">นำเครื่องมือออกจากระบบ</h2></div><button type="button" class="x" id="rdClose" aria-label="ปิด">×</button></div>
+    <div class="dlg-b">
+      <div class="form">
+        <div class="fld full"><label for="rdReason">สาเหตุ *</label><select id="rdReason" required>
+          <option value="">— เลือกสาเหตุ —</option><option>ชำรุด ซ่อมไม่ได้</option><option>ชำรุด ไม่คุ้มค่าซ่อม</option><option>สอบเทียบไม่ผ่าน ปรับตั้งไม่ได้</option><option>เสื่อมสภาพ / หมดอายุการใช้งาน</option><option>สูญหาย</option><option>แทงจำหน่ายตามระเบียบพัสดุ</option><option>โอนย้ายไปหน่วยงานอื่น</option><option>บันทึกซ้ำ / บันทึกผิด</option><option>อื่น ๆ</option></select></div>
+        <div class="fld"><label for="rdDate">วันที่นำออก</label><input id="rdDate" type="date"></div>
+        <div class="fld"><label for="rdRef">เลขที่หนังสือ / คำสั่ง (ถ้ามี)</label><input id="rdRef"></div>
+        <div class="fld full"><label for="rdDetail">รายละเอียดเพิ่มเติม</label><textarea id="rdDetail" rows="2" placeholder="เช่น จอแสดงผลแตก ไม่มีอะไหล่ ส่งคืนพัสดุแล้ว"></textarea></div>
+      </div>
+      <p class="hint" style="margin:12px 0 0">เครื่องจะไม่ถูกนับในทะเบียนและรายงาน แต่ยังเก็บประวัติไว้ในรายการ “เครื่องมือที่นำออก” ผู้ดูแลนำกลับเข้าระบบได้</p>
+      <div class="formfoot"><span></span><div class="actions"><button type="button" class="btn" id="rdCancel">ยกเลิก</button><button type="submit" class="btn danger">ยืนยันนำออกจากระบบ</button></div></div>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="ppdlg" aria-labelledby="ppTitle">
+  <div class="dlg-h"><h2 id="ppTitle" style="font-size:19px">ประกาศความเป็นส่วนตัว (Privacy Notice)</h2><button type="button" class="x" id="ppClose" aria-label="ปิด">×</button></div>
+  <div class="dlg-b notice">
+    <p>ระบบกำกับติดตามการสอบเทียบเครื่องมือแพทย์ องค์การบริหารส่วนจังหวัดสกลนคร (กองสาธารณสุข) ในฐานะผู้ควบคุมข้อมูลส่วนบุคคล แจ้งรายละเอียดตามพระราชบัญญัติคุ้มครองข้อมูลส่วนบุคคล พ.ศ. 2562 ดังนี้</p>
+    <h3>1. ข้อมูลที่เก็บ</h3>
+    <ul><li>ชื่อผู้ใช้ (รหัสสถานพยาบาลหรือบัญชีผู้ดูแล) และรหัสผ่านที่เข้ารหัสแบบทางเดียว</li><li>วันเวลาที่เข้าใช้ และประวัติการเพิ่ม แก้ไข นำออก อัปโหลด ส่งแบบสำรวจ</li><li>ชื่อ ตำแหน่ง และเบอร์ติดต่อของผู้รายงานในแบบสำรวจ (กรอกตามสมัครใจ)</li></ul>
+    <p>ระบบนี้ไม่เก็บข้อมูลผู้ป่วยหรือข้อมูลสุขภาพของบุคคลใด ข้อมูลหลักเป็นข้อมูลครุภัณฑ์ของหน่วยงาน</p>
+    <h3>2. วัตถุประสงค์และฐานทางกฎหมาย</h3>
+    <ul><li>กำกับติดตามการบำรุงรักษาและสอบเทียบเครื่องมือแพทย์ตามมาตรฐานบริการสุขภาพปฐมภูมิ (ภารกิจของหน่วยงานรัฐ)</li><li>ตรวจสอบย้อนหลังว่าใครแก้ไขข้อมูลใด เมื่อใด และรักษาความมั่นคงปลอดภัยของระบบ</li></ul>
+    <h3>3. การเข้าถึงและการเปิดเผย</h3>
+    <ul><li>รพ.สต. เห็นเฉพาะข้อมูลของหน่วยตนเอง</li><li>กองสาธารณสุข (ผู้ดูแล) เห็นข้อมูลทุกแห่งและประวัติการใช้งาน</li><li>ไม่เปิดเผยแก่บุคคลภายนอก เว้นแต่กฎหมายกำหนด</li></ul>
+    <h3>4. ระยะเวลาเก็บรักษา</h3>
+    <p>ประวัติการใช้งานเก็บไว้ตามรอบปีงบประมาณและไม่เกินระยะเวลาที่จำเป็นต่อการตรวจสอบ บัญชีผู้ใช้จะถูกยกเลิกเมื่อพ้นหน้าที่</p>
+    <h3>5. สิทธิของเจ้าของข้อมูล</h3>
+    <p>ขอเข้าถึง ขอแก้ไข ขอลบ หรือคัดค้านการประมวลผลข้อมูลของตนได้ โดยติดต่อกองสาธารณสุข องค์การบริหารส่วนจังหวัดสกลนคร โทร 0-4273-3090</p>
+    <p class="hint">ร่างประกาศนี้ควรให้เจ้าหน้าที่คุ้มครองข้อมูลส่วนบุคคล (DPO) หรือนิติกรของ อบจ. ตรวจทานก่อนใช้จริง</p>
+  </div>
+</dialog>
+
+<dialog id="pwdlg" class="sm" aria-labelledby="pwTitle">
+  <form id="pwForm">
+    <div class="dlg-h"><h2 id="pwTitle" style="font-size:19px">เปลี่ยนรหัสผ่าน</h2><button type="button" class="x" id="pwClose" aria-label="ปิด">×</button></div>
+    <div class="dlg-b">
+      <div class="form">
+        <div class="fld full"><label for="pwOld">รหัสผ่านปัจจุบัน</label><input id="pwOld" type="password" required></div>
+        <div class="fld"><label for="pwNew">รหัสผ่านใหม่ (อย่างน้อย 8 ตัว)</label><input id="pwNew" type="password" required minlength="8"></div>
+        <div class="fld"><label for="pwNew2">ยืนยันรหัสผ่านใหม่</label><input id="pwNew2" type="password" required minlength="8"></div>
+      </div>
+      <div class="err" id="pwErr" hidden style="margin-top:12px"></div>
+      <div class="formfoot"><span></span><div class="actions"><button type="button" class="btn" id="pwCancel">ยกเลิก</button><button type="submit" class="btn primary">บันทึก</button></div></div>
+    </div>
+  </form>
+</dialog>
+<input type="file" id="certOne" accept="application/pdf,.pdf" hidden>
 
 <datalist id="typeList"></datalist>
 <datalist id="budgetList"><option value="งบประมาณ อบจ."><option value="เงินบำรุง รพ.สต."><option value="งบ สปสช. (กองทุนตำบล)"><option value="เงินบริจาค"><option value="โอนจากกระทรวงสาธารณสุข"></datalist>
@@ -552,27 +798,29 @@ let TARGETS={coverage:100,pass:95,lab:95,capa:100,clean:80};
 try{const t=JSON.parse(localStorage.getItem('calib.targets')||'null'); if(t) Object.assign(TARGETS,t);}catch(e){}
 
 /* ---------- store: shared db when opened in Claude, else this browser ---------- */
-const store={mode:'none',capa:new Map(),inv:new Map()};
-let db=null,userApi=null,myId='',canWrite=true,names={},downloads=null;
-function localLoad(){ try{ const c=JSON.parse(localStorage.getItem('calib.v2.capa')||'{}'); const i=JSON.parse(localStorage.getItem('calib.v2.inv')||'{}'); Object.entries(c).forEach(([k,v])=>store.capa.set(k,v)); Object.entries(i).forEach(([k,v])=>store.inv.set(k,v)); }catch(e){} }
-function localSave(){ try{ localStorage.setItem('calib.v2.capa',JSON.stringify(Object.fromEntries(store.capa))); localStorage.setItem('calib.v2.inv',JSON.stringify(Object.fromEntries(store.inv))); return true; }catch(e){ return false; } }
+const COLLS=['capa','inv','acct','cert','survey','cfg','log'];
+const store={mode:'none'}; COLLS.forEach(c=>store[c]=new Map());
+let db=null,userApi=null,canWrite=true,downloads=null;
+let sess=null; try{sess=JSON.parse(sessionStorage.getItem('calib.sess')||'null');}catch(e){}
+function localLoad(){ for(const c of COLLS){ try{ let o=JSON.parse(localStorage.getItem('calib.v3.'+c)||'null'); if(!o&&(c==='capa'||c==='inv')) o=JSON.parse(localStorage.getItem('calib.v2.'+c)||'null'); Object.entries(o||{}).forEach(([k,v])=>store[c].set(k,v)); }catch(e){} } }
+function localSave(c){ try{ localStorage.setItem('calib.v3.'+c,JSON.stringify(Object.fromEntries(store[c]))); return true; }catch(e){ return false; } }
 const queues=new Map();
 function putDoc(coll,key,val){
-  (coll==='capa'?store.capa:store.inv).set(key,val);
+  store[coll].set(key,val);
   if(store.mode==='db'){
     const qk=coll+'/'+key;
-    const p=(queues.get(qk)||Promise.resolve()).then(async()=>{ try{ await db.collection(coll).doc(key).set(val); }catch(err){ if(err&&err.code==='invalid_argument'){ canWrite=false; setNotes(); toast('บัญชีนี้ไม่มีสิทธิ์แก้ไข การเปลี่ยนแปลงไม่ถูกบันทึก'); } else toast('บันทึกไม่สำเร็จ ลองอีกครั้ง'); throw err; } });
+    const p=(queues.get(qk)||Promise.resolve()).then(async()=>{ try{ await db.collection(coll).doc(key).set(val); }catch(err){ if(err&&err.code==='invalid_argument'){ canWrite=false; setNotes(); toast('บัญชี Claude นี้ไม่มีสิทธิ์เขียนข้อมูล การเปลี่ยนแปลงไม่ถูกบันทึก'); } else if(err&&err.code==='quota_exceeded'){ toast('พื้นที่ฐานข้อมูลเต็ม ติดต่อผู้ดูแลระบบ'); } else toast('บันทึกไม่สำเร็จ ลองอีกครั้ง'); throw err; } });
     queues.set(qk,p.catch(()=>{})); return p;
   }
-  if(!localSave()) toast('เบราว์เซอร์ไม่อนุญาตให้บันทึก ข้อมูลจะหายเมื่อปิดหน้า');
+  if(!localSave(coll)) toast('เบราว์เซอร์ไม่อนุญาตให้บันทึก ข้อมูลจะหายเมื่อปิดหน้า');
   return Promise.resolve();
 }
 function setNotes(){
-  const [k,m]= store.mode==='db' ? (canWrite?['ok','เชื่อมต่อฐานข้อมูลกลางแล้ว · ทุกคนที่เปิดหน้านี้เห็นข้อมูลเดียวกันทันที']:['off','ดูได้อย่างเดียว · บัญชีนี้ไม่มีสิทธิ์แก้ไข'])
-    : store.mode==='local' ? ['off','บันทึกไว้ในเบราว์เซอร์เครื่องนี้ · ใช้ “สำรองข้อมูล (.json)” เพื่อย้ายไปเครื่องอื่น'] : ['','กำลังเตรียมที่เก็บข้อมูล…'];
+  const [k,m]= store.mode==='db' ? (canWrite?['ok','เชื่อมต่อฐานข้อมูลกลางแล้ว · ทุกคนที่เปิดหน้านี้เห็นข้อมูลเดียวกันทันที']:['off','ดูได้อย่างเดียว · บัญชี Claude นี้ไม่มีสิทธิ์เขียนข้อมูล'])
+    : store.mode==='local' ? ['off','ข้อมูลบันทึกในเบราว์เซอร์เครื่องนี้เท่านั้น · เครื่องอื่นจะไม่เห็น จนกว่าจะติดตั้งบนเซิร์ฟเวอร์กลาง'] : ['','กำลังเตรียมที่เก็บข้อมูล…'];
   ['#syncNote','#storeNote'].forEach(s=>{const el=$(s); el.className='syncnote '+k; el.textContent=m;});
 }
-const editable=()=>store.mode!=='none'&&canWrite&&!ROUND;
+const editable=()=>store.mode!=='none'&&canWrite&&!ROUND&&!!sess;
 
 /* ---------- dataset ---------- */
 const BASE_TYPES=SEED.types.map(t=>({name:t[0],cat:t[1],risk:t[2]}));
@@ -585,24 +833,24 @@ function resolveType(typeByName,name){
   if(!t){ t={name:canon,cat:m?m[1]:'อื่น ๆ (เพิ่มใหม่)',risk:m?m[2]:'กลาง'}; typeByName.set(canon,t); }
   return t;
 }
-function mkItem(fac,t,o){ return {id:o.id,t,f:fac,st:+o.st||0,brand:o.brand||'',model:o.model||'',sn:o.sn||'',cert:o.cert||'',remark:o.remark||'',assetNo:o.assetNo||'',acquired:o.acquired||'',budget:o.budget||'',note:o.note||'',src:o.src||'base'}; }
+function mkItem(fac,t,o){ return {id:o.id,t,f:fac,st:+o.st||0,brand:o.brand||'',model:o.model||'',sn:o.sn||'',cert:o.cert||'',remark:o.remark||'',assetNo:o.assetNo||'',acquired:o.acquired||'',budget:o.budget||'',note:o.note||'',src:o.src||'base',removed:o.removed||null}; }
 function buildMain(){
   const typeByName=new Map(BASE_TYPES.map(t=>[t.name,{...t}]));
   const facs=BASE_FACS.map((f,i)=>({...f,i}));
   const facByKey=new Map(facs.map(f=>[f.key,f]));
   for(const [k,d] of store.inv){ if(!facByKey.has(k)&&d&&d.name){ const f={key:k,zone:+d.zone||0,name:d.name,isNew:true,i:facs.length}; facs.push(f); facByKey.set(k,f);} }
-  const items=[];
+  const items=[], removed=[];
   for(const r of SEED.items){
     const fac=facs[r[2]]; const base={id:r[0],st:r[3],brand:r[4],model:r[5],sn:r[6],cert:r[7],remark:r[8]};
     const ov=store.inv.get(fac.key)?.items?.[docId(r[0])];
     if(ov&&ov.deleted) continue;
     const o=ov?{...base,...Object.fromEntries(Object.entries(ov).filter(([,v])=>v!==undefined&&v!==null)),id:r[0],src:'edited'}:{...base,src:'base'};
     const t=ov&&ov.type?resolveType(typeByName,ov.type):typeByName.get(BASE_TYPES[r[1]].name);
-    items.push(mkItem(fac,t,o));
+    const mi=mkItem(fac,t,o); if(ov&&ov.removed) removed.push(mi); else items.push(mi);
   }
   for(const [k,d] of store.inv){ const fac=facByKey.get(k); if(!fac||!d.items) continue;
-    for(const [iid,ov] of Object.entries(d.items)){ if(BASE_IDS.has(iid)||ov.deleted) continue; items.push(mkItem(fac,resolveType(typeByName,ov.type),{...ov,id:ov.id||iid,src:'new'})); } }
-  return {items,facs,types:[...typeByName.values()],label:ROUND_LABEL};
+    for(const [iid,ov] of Object.entries(d.items)){ if(BASE_IDS.has(iid)||ov.deleted) continue; const mi=mkItem(fac,resolveType(typeByName,ov.type),{...ov,id:ov.id||iid,src:'new'}); if(ov.removed) removed.push(mi); else items.push(mi); } }
+  return {items,facs,removed,types:[...typeByName.values()],label:ROUND_LABEL};
 }
 let ROUND=null; // imported contractor round (view-only)
 let DS=null,S=null,BASE_S=null;
@@ -627,7 +875,7 @@ const tip=$('#tip');
 document.addEventListener('pointerover',e=>{const t=e.target.closest('[data-tip]'); if(!t){tip.style.opacity=0;return;} tip.innerHTML=t.dataset.tip; tip.style.opacity=1;});
 document.addEventListener('pointermove',e=>{if(tip.style.opacity==='1'){const w=tip.offsetWidth,h=tip.offsetHeight; let x=e.clientX+14,y=e.clientY+14; if(x+w>innerWidth-8)x=e.clientX-w-14; if(y+h>innerHeight-8)y=e.clientY-h-14; tip.style.left=x+'px'; tip.style.top=y+'px';}});
 function toast(msg){const t=$('#toast'); t.textContent=msg; t.classList.add('on'); clearTimeout(toast._t); toast._t=setTimeout(()=>t.classList.remove('on'),2800);}
-function showTab(k){ $$('nav.tabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===k)); $$('section.view').forEach(v=>v.hidden=v.id!=='v-'+k); try{localStorage.setItem('calib.tab',k);}catch(e){} if(k==='inventory') renderInventory(); }
+function showTab(k){ $$('nav.tabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===k)); $$('section.view').forEach(v=>v.hidden=v.id!=='v-'+k); try{localStorage.setItem('calib.tab',k);}catch(e){} if(k==='inventory') renderInventory(); else if(k==='cert') renderCert(); else if(k==='plan') renderSurvey(); else if(k==='users') renderUsers(); }
 $$('nav.tabs button').forEach(b=>b.onclick=()=>{showTab(b.dataset.tab); window.scrollTo({top:0});});
 const openDlg=d=>{ if(d.showModal) d.showModal(); else d.setAttribute('open',''); };
 const IC={
@@ -758,6 +1006,7 @@ function renderInventory(){
   $('#invTable tbody').innerHTML=rows.map(it=>{const [l,c]=STL[it.st]; const sc=it.src==='new'?'<span class="chip new plain">เพิ่มใหม่</span>':it.src==='edited'?'<span class="chip warn plain">แก้ไขแล้ว</span>':'<span class="chip neutral plain">ผู้รับจ้าง</span>';
     return `<tr><td class="mono">${esc(it.id)}</td><td>${esc(it.t.name)}</td><td class="hint">${esc([it.brand,it.model,it.sn&&('S/N '+it.sn)].filter(Boolean).join(' · ')||'—')}</td><td>${esc(it.assetNo)||'<span class="hint">—</span>'}</td><td class="hint">${esc([it.acquired,it.budget].filter(Boolean).join(' · ')||'—')}</td><td><span class="chip ${c}">${l}</span></td><td>${sc}</td><td><button class="btn sm" data-edit="${esc(it.id)}" ${can?'':'disabled'}>แก้ไข</button></td></tr>`;}).join('')||'<tr><td colspan="8" class="hint">ยังไม่มีรายการ · กด “เพิ่มเครื่องมือ” หรือนำเข้าไฟล์ Excel ของ รพ.สต.</td></tr>';
   ['#invAdd','#invNewFac'].forEach(s=>$(s).disabled=!can);
+  $('#invFac').disabled=!isAdmin(); renderRemoved();
 }
 ['#invSearch'].forEach(s=>$(s).oninput=renderInventory); ['#invSt','#invSrc'].forEach(s=>$(s).onchange=renderInventory);
 $('#invTable tbody').addEventListener('click',e=>{const b=e.target.closest('[data-edit]'); if(b) openEdit(b.dataset.edit);});
@@ -771,13 +1020,13 @@ function openEdit(id){
   $('#edType').value=it?it.t.name:''; $('#edId').value=it?it.id:''; $('#edId').readOnly=!!it;
   $('#edAsset').value=it?.assetNo||''; $('#edBrand').value=it?.brand||''; $('#edModel').value=it?.model||''; $('#edSn').value=it?.sn||'';
   $('#edAcq').value=it?.acquired||''; $('#edBudget').value=it?.budget||''; $('#edSt').value=it?String(it.st):'3'; $('#edRemark').value=it?.remark||''; $('#edNote').value=it?.note||'';
-  $('#edDel').hidden=!it; delArmed=false; $('#edDel').textContent='ลบออกจากทะเบียน';
+  $('#edDel').hidden=!it;
   openDlg($('#edlg')); $('#edType').focus();
 }
 $('#invAdd').onclick=()=>openEdit(null);
 ['#edClose','#edCancel'].forEach(s=>$(s).onclick=()=>$('#edlg').close());
 function invDoc(fac){ const d=store.inv.get(fac.key); return d?JSON.parse(JSON.stringify(d)):{name:fac.name,zone:fac.zone,items:{}}; }
-function stamp(o){ o.at=new Date().toISOString(); o.by=myId||''; return o; }
+function stamp(o){ o.at=new Date().toISOString(); o.by=sess?sess.user:''; return o; }
 $('#edForm').addEventListener('submit',async e=>{
   e.preventDefault(); if(!editing) return; const {fac,it}=editing;
   const type=$('#edType').value.trim(); if(!type){ $('#edType').focus(); return; }
@@ -787,15 +1036,9 @@ $('#edForm').addEventListener('submit',async e=>{
   const key=docId(id);
   d.items[key]=stamp({...(d.items[key]||{}),id,type,assetNo:$('#edAsset').value.trim(),brand:$('#edBrand').value.trim(),model:$('#edModel').value.trim(),sn:$('#edSn').value.trim(),acquired:$('#edAcq').value.trim(),budget:$('#edBudget').value.trim(),st:+$('#edSt').value,remark:$('#edRemark').value.trim(),note:$('#edNote').value.trim()});
   stamp(d); $('#edlg').close();
-  const p=putDoc('inv',fac.key,d); rebuild(); p.then(()=>toast(it?'บันทึกการแก้ไขแล้ว':'เพิ่มเครื่องมือแล้ว'),()=>{});
+  const p=putDoc('inv',fac.key,d); logAct(it?'แก้ไขเครื่องมือ':'เพิ่มเครื่องมือ',id+' · '+type); rebuild(); p.then(()=>toast(it?'บันทึกการแก้ไขแล้ว':'เพิ่มเครื่องมือแล้ว'),()=>{});
 });
-$('#edDel').onclick=()=>{
-  if(!editing||!editing.it) return;
-  if(!delArmed){ delArmed=true; $('#edDel').textContent='กดอีกครั้งเพื่อยืนยันการลบ'; return; }
-  const {fac,it}=editing; const d=invDoc(fac); const key=docId(it.id);
-  if(BASE_IDS.has(key)) d.items[key]=stamp({...(d.items[key]||{}),deleted:true}); else delete d.items[key];
-  stamp(d); $('#edlg').close(); const p=putDoc('inv',fac.key,d); rebuild(); p.then(()=>toast('ลบออกจากทะเบียนแล้ว'),()=>{});
-};
+$('#edDel').onclick=()=>{ if(editing&&editing.it) openRemove(editing.fac,editing.it); };
 $('#invNewFac').onclick=()=>{ $('#fdName').value=''; $('#fdZone').value=''; openDlg($('#fdlg')); $('#fdName').focus(); };
 ['#fdClose','#fdCancel'].forEach(s=>$(s).onclick=()=>$('#fdlg').close());
 $('#fdForm').addEventListener('submit',e=>{
@@ -803,7 +1046,7 @@ $('#fdForm').addEventListener('submit',e=>{
   const zone=+$('#fdZone').value||0;
   if(DS.facs.some(f=>f.name===name&&(f.zone===zone))){ toast('มี รพ.สต. นี้ในระบบแล้ว'); return; }
   const key='N'+hash(name+'|'+zone); const d=stamp({name,zone,isNew:true,items:{}});
-  $('#fdlg').close(); invFacKey=key; const p=putDoc('inv',key,d); rebuild(); p.then(()=>toast('เพิ่ม '+name+' แล้ว'),()=>{});
+  $('#fdlg').close(); invFacKey=key; const p=putDoc('inv',key,d); logAct('เพิ่ม รพ.สต. รับโอนใหม่',name); rebuild(); p.then(()=>toast('เพิ่ม '+name+' แล้ว'),()=>{});
 });
 $('#invSurvey').onclick=()=>{const f=S.byFac.find(x=>x.key.key===invFacKey); if(f) exportSurvey([f]);};
 
@@ -835,7 +1078,7 @@ async function importSurvey(file){
       ws.eachRow((row,rn)=>{ if(rn<=hr) return;
         const v=row.values; const itemName=cstr(v[cols.item]); if(!itemName||/ครั้งล่าสุด/.test(itemName)||/^รายการ(วัสดุ|ครุภัณฑ์)/.test(itemName)) return;
         const facName=(cols.fac&&cstr(v[cols.fac]))||titleFac;
-        const fac=facName?findFac(facName,invFacKey):curFac(); if(!fac){ skipped++; return; }
+        const fac=(sess&&sess.role==='fac')?curFac():(facName?findFac(facName,invFacKey):curFac()); if(!fac){ skipped++; return; }
         const note=cols.note?cstr(v[cols.note]):''; const m=ID_RE.exec(note);
         const f={type:itemName};
         [['assetNo','asset'],['acquired','acq'],['budget','budget'],['brand','brand'],['model','model'],['sn','sn']].forEach(([k,c])=>{ if(cols[c]){ const x=cstr(v[cols[c]]); if(x) f[k]=x; } });
@@ -869,7 +1112,7 @@ async function commitSurvey(){
     if(g.fac.pendingNew&&svPending.size===1) invFacKey=g.fac.key;
   }
   if(svPending.size===1) invFacKey=[...svPending.keys()][0];
-  svPending=null; rebuild();
+  svPending=null; logAct('นำเข้าแบบสำรวจ Excel',`อัปเดต ${nU} · เพิ่มใหม่ ${nA}`); rebuild();
   const ok=await Promise.allSettled(ps);
   $('#svPreview').innerHTML=`<div class="syncnote ok">บันทึกแล้ว · อัปเดต ${nU} เครื่อง · เพิ่มใหม่ ${nA} เครื่อง${ok.some(r=>r.status==='rejected')?' (บางรายการบันทึกไม่สำเร็จ)':''}</div>`;
 }
@@ -922,19 +1165,25 @@ function renderCapa(){
   const q=$('#capaSearch').value.trim().toLowerCase(), pr=$('#capaPri').value, z=$('#capaZone').value;
   const rows=S.capaItems.filter(it=>{const c=capaOf(it.id); return (!capaStage||c.status===capaStage)&&(!pr||it.t.risk===pr)&&(!z||String(it.f.zone)===z)&&(!q||(it.f.name+' '+it.id+' '+it.t.name).toLowerCase().includes(q));});
   $('#capaCount').textContent=`${rows.length} รายการ`;
-  const dis=(store.mode!=='none'&&canWrite)?'':'disabled';
-  $('#capaTable tbody').innerHTML=rows.map((it,n)=>{const c=capaOf(it.id); const who=c.at?`<div class="who">${esc(names[c.by]||'')}${names[c.by]?' · ':''}${new Date(c.at).toLocaleString('th-TH',{dateStyle:'medium',timeStyle:'short'})}</div>`:'';
+  const adm=isAdmin(), can=store.mode!=='none'&&canWrite&&!!sess;
+  const PLANS=['ส่งซ่อม/ปรับตั้ง แล้วขอสอบเทียบซ้ำ','ขอจัดซื้อ/จัดหาทดแทน','งดใช้ ใช้เครื่องสำรองแทน','ยืมเครื่องจากหน่วยอื่นชั่วคราว','แทงจำหน่าย นำออกจากระบบ','อื่น ๆ'];
+  $('#capaTable tbody').innerHTML=rows.map((it,n)=>{const c=capaOf(it.id); const cs=CAPAK[c.status]||CAPA[0];
+    const who=c.at?`<div class="who">${esc(c.by||'')}${c.by?' · ':''}${thDate(c.at)}</div>`:'';
+    const pwho=c.planAt?`<div class="who">${esc(c.planBy||'')}${c.planBy?' · ':''}${thDate(c.planAt)}</div>`:'';
     return `<tr><td class="num hint">${n+1}</td><td><b>${esc(it.f.name)}</b> <span class="hint">${it.f.zone?'โซน '+it.f.zone:''}</span><div>${esc(it.t.name)}</div><div class="mono hint">${esc(it.id)}</div></td><td>${it.st===2?'<span class="chip serious">ชำรุด</span> ':''}${esc(it.remark)||'—'}</td><td><span class="tag ${it.t.risk==='สูง'?'p1':it.t.risk==='กลาง'?'p2':''}">${it.t.risk==='สูง'?'เร่งด่วน':it.t.risk==='กลาง'?'ปานกลาง':'ต่ำ'}</span></td>
-    <td><select class="capa-status" data-id="${esc(it.id)}" aria-label="สถานะการแก้ไข ${esc(it.id)}" ${dis}>${CAPA.map(o=>`<option value="${o.k}" ${o.k===c.status?'selected':''}>${o.l}</option>`).join('')}</select>${who}</td>
-    <td><input class="note-in" data-id="${esc(it.id)}" value="${esc(c.note||'')}" placeholder="เช่น ส่งซ่อมบริษัท… วันที่…" aria-label="บันทึก ${esc(it.id)}" ${dis}></td></tr>`;}).join('');
+    <td><div class="stack"><select class="planin capa-plan" data-id="${esc(it.id)}" aria-label="แนวทางแก้ไข ${esc(it.id)}" ${can?'':'disabled'}><option value="">— ยังไม่ระบุ —</option>${PLANS.map(p=>`<option ${c.plan===p?'selected':''}>${p}</option>`).join('')}</select><input class="planin capa-plannote" data-id="${esc(it.id)}" value="${esc(c.planNote||'')}" placeholder="รายละเอียด / กำหนดแล้วเสร็จ" aria-label="รายละเอียดแนวทาง ${esc(it.id)}" ${can?'':'disabled'}>${pwho}</div></td>
+    <td><div class="stack">${adm?`<select class="capa-status" data-id="${esc(it.id)}" aria-label="สถานะการแก้ไข ${esc(it.id)}" ${can?'':'disabled'}>${CAPA.map(o=>`<option value="${o.k}" ${o.k===c.status?'selected':''}>${o.l}</option>`).join('')}</select><input class="note-in" data-id="${esc(it.id)}" value="${esc(c.note||'')}" placeholder="บันทึกของกองสาธารณสุข" aria-label="บันทึก ${esc(it.id)}" ${can?'':'disabled'}>`:`<span><span class="chip ${cs.c}">${cs.l}</span></span>${c.note?`<div class="hint">กองสาธารณสุข: ${esc(c.note)}</div>`:''}`}${who}</div></td></tr>`;}).join('')||'<tr><td colspan="6" class="hint">ไม่มีเครื่องที่ต้องแก้ไข</td></tr>';
 }
-$('#capaTable tbody').addEventListener('change',e=>{ const el=e.target; if(el.classList.contains('capa-status')) saveCapa(el.dataset.id,{status:el.value}); else if(el.classList.contains('note-in')) saveCapa(el.dataset.id,{note:el.value.trim()}); });
+$('#capaTable tbody').addEventListener('change',e=>{ const el=e.target, id=el.dataset.id; if(!id) return;
+  if(el.classList.contains('capa-plan')) saveCapa(id,{plan:el.value},true); else if(el.classList.contains('capa-plannote')) saveCapa(id,{planNote:el.value.trim()},true);
+  else if(isAdmin()&&el.classList.contains('capa-status')) saveCapa(id,{status:el.value},false); else if(isAdmin()&&el.classList.contains('note-in')) saveCapa(id,{note:el.value.trim()},false); });
 $('#capaSearch').oninput=renderCapa; $('#capaPri').onchange=renderCapa; $('#capaZone').onchange=renderCapa;
-function saveCapa(id,patch){
-  const key=docId(id), prev=capaOf(id);
-  const next=stamp({status:prev.status||'open',note:prev.note||'',...patch,itemId:id});
-  const hist=Array.isArray(prev.history)?prev.history.slice(-9):[]; hist.push({status:next.status,note:next.note,by:next.by,at:next.at}); next.history=hist;
-  const p=putDoc('capa',key,next); renderLive(); p.then(()=>toast('บันทึกแล้ว · '+id),()=>{});
+function saveCapa(id,patch,isPlan){
+  if(!sess) return; const key=docId(id), prev=capaOf(id), now=new Date().toISOString();
+  const next={status:'open',note:'',...prev,...patch,itemId:id};
+  if(isPlan){ next.planBy=sess.user; next.planAt=now; } else { next.by=sess.user; next.at=now; }
+  const hist=Array.isArray(prev.history)?prev.history.slice(-11):[]; hist.push({status:next.status,plan:next.plan||'',by:sess.user,at:now}); next.history=hist;
+  const p=putDoc('capa',key,next); logAct(isPlan?'บันทึกแนวทางแก้ไข':'ปรับสถานะการแก้ไข',`${id} · ${isPlan?(next.plan||next.planNote||''):CAPAK[next.status].l}`); renderLive(); p.then(()=>toast('บันทึกแล้ว · '+id),()=>{});
 }
 
 /* ---------- plan ---------- */
@@ -1014,7 +1263,8 @@ async function exportRegister(){ const wb=new ExcelJS.Workbook();
   simpleSheet(wb,'ทะเบียนเครื่องมือ',['ลำดับ','โซน','รพ.สต.','รหัสเครื่อง','ประเภท (มาตรฐาน)','กลุ่มงาน','ความเสี่ยง','ยี่ห้อ','รุ่น','S/N','เลขครุภัณฑ์','วันที่ได้มา','แหล่งงบประมาณ','เลขใบรับรอง','ผล','ปัญหาที่พบ','หมายเหตุ','ที่มาข้อมูล'],
     [...DS.items].sort((a,b)=>(a.f.zone||99)-(b.f.zone||99)||a.f.name.localeCompare(b.f.name,'th')||a.id.localeCompare(b.id)).map((it,n)=>[n+1,it.f.zone||'ใหม่',it.f.name,it.id,it.t.name,it.t.cat,it.t.risk,it.brand,it.model,it.sn,it.assetNo,it.acquired,it.budget,it.cert,STL[it.st][0],it.remark,it.note,it.src==='new'?'เพิ่มใหม่':it.src==='edited'?'แก้ไขแล้ว':'ผู้รับจ้าง']),
     [8,7,26,18,36,24,10,16,16,18,18,14,20,22,12,36,24,12]);
-  await saveWb(wb,'ทะเบียนเครื่องมือแพทย์_รพสต_อบจสกลนคร.xlsx'); }
+  simpleSheet(wb,'เครื่องที่นำออก',['โซน','รพ.สต.','รหัสเครื่อง','ประเภท','ยี่ห้อ','รุ่น','S/N','สาเหตุ','รายละเอียด','วันที่นำออก','เลขที่หนังสือ','ผู้บันทึก'],(DS.removed||[]).map(it=>{const r=it.removed||{}; return [it.f.zone||'ใหม่',it.f.name,it.id,it.t.name,it.brand,it.model,it.sn,r.reason||'',r.detail||'',r.date||'',r.ref||'',r.by||''];}),[7,26,18,34,16,16,18,26,36,14,18,14]);
+  logAct('ส่งออกทะเบียนเครื่องมือ'); await saveWb(wb,'ทะเบียนเครื่องมือแพทย์_รพสต_อบจสกลนคร.xlsx'); }
 async function exportSummary(){
   const wb=new ExcelJS.Workbook(); const s=S; const cs=capaSummary();
   const ws=wb.addWorksheet('สรุปผู้บริหาร'); ws.columns=[{width:52},{width:18},{width:18},{width:24}];
@@ -1034,7 +1284,7 @@ $$('[data-exp]').forEach(b=>b.onclick=async()=>{b.disabled=true; const t=b.textC
 
 /* ---------- backup ---------- */
 $('#bkOut').onclick=async()=>{
-  const data=JSON.stringify({app:'calib-sakon',v:2,at:new Date().toISOString(),capa:Object.fromEntries(store.capa),inv:Object.fromEntries(store.inv)},null,1);
+  const o={app:'calib-sakon',v:3,at:new Date().toISOString()}; COLLS.forEach(c=>o[c]=Object.fromEntries(store[c])); const data=JSON.stringify(o,null,1); logAct('สำรองข้อมูล');
   const name=`สำรองข้อมูลสอบเทียบ_${new Date().toISOString().slice(0,10)}.json`;
   if(downloads){ try{ await downloads.save({filename:name,data}); }catch(e){} return; }
   const url=URL.createObjectURL(new Blob([data],{type:'application/json'})); const a=document.createElement('a'); a.href=url; a.download=name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),4000);
@@ -1043,7 +1293,7 @@ $('#bkIn').onchange=async e=>{
   const f=e.target.files[0]; e.target.value=''; if(!f) return;
   if(!editable()){ toast('ไม่สามารถกู้คืนในมุมมองนี้'); return; }
   try{ const j=JSON.parse(await f.text()); if(j.app!=='calib-sakon') throw new Error('ไม่ใช่ไฟล์สำรองของระบบนี้');
-    const ps=[]; for(const [k,v] of Object.entries(j.capa||{})) ps.push(putDoc('capa',k,v)); for(const [k,v] of Object.entries(j.inv||{})) ps.push(putDoc('inv',k,v));
+    const ps=[]; for(const c of COLLS){ if(c==='log') continue; for(const [k,v] of Object.entries(j[c]||{})) ps.push(putDoc(c,k,v)); } logAct('กู้คืนข้อมูลจากไฟล์สำรอง');
     rebuild(); await Promise.allSettled(ps); toast(`กู้คืนแล้ว · ติดตามแก้ไข ${Object.keys(j.capa||{}).length} · ทะเบียน ${Object.keys(j.inv||{}).length} แห่ง`);
   }catch(err){ toast('กู้คืนไม่สำเร็จ: '+(err.message||err)); }
 };
@@ -1077,34 +1327,358 @@ async function importRound(file){
 wireDrop('#drop','#fileIn',importRound);
 $('#backToMain').onclick=()=>{ ROUND=null; $('#importMsg').textContent=''; rebuild(); };
 
+/* ================= v3 modules ================= */
+const isAdmin=()=>!!sess&&sess.role==='admin';
+const thDate=t=>t?new Date(t).toLocaleString('th-TH',{dateStyle:'medium',timeStyle:'short'}):'';
+const clone=o=>JSON.parse(JSON.stringify(o));
+
+/* ---------- audit log (one document per month) ---------- */
+function logAct(act,detail){
+  if(store.mode==='none') return;
+  const now=new Date(), mk=now.toISOString().slice(0,7);
+  const d=clone(store.log.get(mk)||{e:[]}); d.e=(d.e||[]).slice(-399);
+  d.e.push({t:now.toISOString(),u:sess?sess.user:'-',r:sess?sess.role:'-',a:act,d:String(detail||'').slice(0,200)});
+  putDoc('log',mk,d).catch(()=>{});
+}
+function logRows(){ const rows=[]; for(const d of store.log.values()) for(const e of (d.e||[])) rows.push(e); return rows.sort((a,b)=>a.t<b.t?1:-1).slice(0,300); }
+function renderLog(){
+  const q=$('#logSearch').value.trim().toLowerCase();
+  const rows=logRows().filter(e=>!q||(e.u+' '+e.a+' '+e.d).toLowerCase().includes(q));
+  $('#logTable tbody').innerHTML=rows.map(e=>`<tr><td class="num hint">${thDate(e.t)}</td><td class="mono">${esc(e.u)}</td><td>${e.r==='admin'?'ผู้ดูแล':e.r==='fac'?'รพ.สต.':'—'}</td><td>${esc(e.a)}</td><td class="hint">${esc(e.d)}</td></tr>`).join('')||'<tr><td colspan="5" class="hint">ยังไม่มีประวัติ</td></tr>';
+}
+$('#logSearch').oninput=renderLog;
+$('#logExport').onclick=async()=>{ const wb=new ExcelJS.Workbook(); simpleSheet(wb,'ประวัติการใช้งาน',['วันเวลา','ผู้ใช้','บทบาท','การกระทำ','รายละเอียด'],logRows().map(e=>[thDate(e.t),e.u,e.r==='admin'?'ผู้ดูแล':'รพ.สต.',e.a,e.d]),[22,16,12,28,50]); logAct('ส่งออกประวัติการใช้งาน'); await saveWb(wb,'ประวัติการใช้งานระบบ.xlsx'); };
+
+/* ---------- accounts & login ---------- */
+const acctDoc=()=>store.acct.get('all')||{users:{}};
+const users=()=>acctDoc().users||{};
+const cfg=()=>{ const c=store.cfg.get('main')||{}; return {forceChange:true,...c,surveys:(c.surveys&&Object.keys(c.surveys).length)?c.surveys:{'2570':{open:true,deadline:''}}}; };
+function saveCfg(patch){ return putDoc('cfg','main',stamp({...cfg(),...patch})); }
+async function hashPw(pw,salt){
+  if(window.crypto&&crypto.subtle){ const enc=new TextEncoder(); const k=await crypto.subtle.importKey('raw',enc.encode(pw),'PBKDF2',false,['deriveBits']); const bits=await crypto.subtle.deriveBits({name:'PBKDF2',hash:'SHA-256',salt:enc.encode(salt),iterations:60000},k,256); return 'p1$'+[...new Uint8Array(bits)].map(b=>b.toString(16).padStart(2,'0')).join(''); }
+  let h=salt+'|'+pw; for(let i=0;i<3000;i++) h=hash(h+salt+i)+hash(i+'|'+h); return 'f1$'+h;
+}
+const newSalt=()=>{ const a=new Uint8Array(12); if(window.crypto&&crypto.getRandomValues) crypto.getRandomValues(a); else for(let i=0;i<a.length;i++) a[i]=Math.floor(Math.random()*256); return [...a].map(b=>b.toString(16).padStart(2,'0')).join(''); };
+function saveUsers(mut){ const d=clone(acctDoc()); d.users=d.users||{}; mut(d.users); d.at=new Date().toISOString(); return putDoc('acct','all',d); }
+async function mkCred(pw){ const salt=newSalt(); return {salt,hash:await hashPw(pw,salt)}; }
+const hasAdmin=()=>Object.values(users()).some(u=>u.role==='admin');
+const facUserOf=fk=>Object.entries(users()).find(([,u])=>u.role==='fac'&&u.facKey===fk);
+
+let acctReady=false, pendingUser=null, idleT=null;
+function showAuth(which){ ['authWait','authSetup','authLogin','authChange'].forEach(id=>$('#'+id).hidden=id!==which); $('#auth').hidden=false; $('#appRoot').hidden=true; $('#userChip').hidden=true; }
+function setErr(id,msg){ const el=$(id); el.hidden=!msg; el.textContent=msg||''; }
+function authInit(){
+  if(store.mode==='none'||!acctReady){ showAuth('authWait'); return; }
+  if(!hasAdmin()){ sess=null; showAuth('authSetup'); return; }
+  if(sess){ const u=users()[sess.user]; if(u&&u.role===sess.role&&(u.role==='admin'||buildMain().facs.some(f=>f.key===u.facKey))){ sess.facKey=u.facKey||null; enterApp(); return; } sess=null; try{sessionStorage.removeItem('calib.sess');}catch(e){} }
+  showAuth('authLogin');
+}
+$('#authSetup').addEventListener('submit',async e=>{
+  e.preventDefault(); const name=$('#suUser').value.trim(), pw=$('#suPw').value;
+  if(pw!==$('#suPw2').value) return setErr('#suErr','รหัสผ่านทั้งสองช่องไม่ตรงกัน');
+  if(pw.length<8) return setErr('#suErr','รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร');
+  if(hasAdmin()) return authInit();
+  const c=await mkCred(pw); await saveUsers(us=>{us[name]={role:'admin',...c,mustChange:false,at:new Date().toISOString()};}).catch(()=>{});
+  startSession(name,'admin',null); logAct('สร้างบัญชีผู้ดูแลคนแรก',name); enterApp();
+});
+$('#authLogin').addEventListener('submit',async e=>{
+  e.preventDefault(); setErr('#liErr','');
+  const name=$('#liUser').value.trim(), pw=$('#liPw').value; const u=users()[name];
+  const bad='ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง';
+  if(!u){ sess=null; logAct('เข้าสู่ระบบไม่สำเร็จ','ไม่พบผู้ใช้ '+name.slice(0,20)); return setErr('#liErr',bad); }
+  if(u.lockUntil&&new Date(u.lockUntil)>new Date()) return setErr('#liErr',`บัญชีถูกล็อกชั่วคราวจากการใส่รหัสผิดหลายครั้ง ลองใหม่หลัง ${new Date(u.lockUntil).toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'})} หรือติดต่อกองสาธารณสุข`);
+  const h=await hashPw(pw,u.salt);
+  if(h!==u.hash){ const fails=(u.fails||0)+1; const lock=fails>=5; await saveUsers(us=>{ if(us[name]){ us[name].fails=lock?0:fails; if(lock) us[name].lockUntil=new Date(Date.now()+15*60000).toISOString(); } }).catch(()=>{}); logAct('เข้าสู่ระบบไม่สำเร็จ',name+(lock?' (ล็อก 15 นาที)':'')); return setErr('#liErr',lock?'ใส่รหัสผิด 5 ครั้ง บัญชีถูกล็อก 15 นาที':bad+` (เหลือ ${5-fails} ครั้ง)`); }
+  $('#liPw').value='';
+  if(u.mustChange){ pendingUser=name; $('#chHint').textContent='เข้าใช้ครั้งแรกต้องเปลี่ยนรหัสผ่าน เพราะรหัสสถานพยาบาลเป็นข้อมูลที่บุคคลทั่วไปค้นหาได้'; showAuth('authChange'); return; }
+  await saveUsers(us=>{ if(us[name]){ us[name].fails=0; us[name].lockUntil=null; us[name].last=new Date().toISOString(); } }).catch(()=>{});
+  startSession(name,u.role,u.facKey||null); logAct('เข้าสู่ระบบ'); enterApp();
+});
+$('#authChange').addEventListener('submit',async e=>{
+  e.preventDefault(); const pw=$('#chPw').value; const name=pendingUser; const u=users()[name]; if(!u) return authInit();
+  if(pw!==$('#chPw2').value) return setErr('#chErr','รหัสผ่านทั้งสองช่องไม่ตรงกัน');
+  if(pw.length<8) return setErr('#chErr','รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร');
+  if(pw===name) return setErr('#chErr','รหัสผ่านใหม่ต้องไม่ซ้ำกับรหัสสถานพยาบาล');
+  const c=await mkCred(pw); await saveUsers(us=>{ us[name]={...us[name],...c,mustChange:false,fails:0,lockUntil:null,last:new Date().toISOString(),changed:new Date().toISOString()}; }).catch(()=>{});
+  $('#chPw').value=$('#chPw2').value=''; setErr('#chErr',''); pendingUser=null;
+  startSession(name,u.role,u.facKey||null); logAct('เปลี่ยนรหัสผ่านครั้งแรกและเข้าสู่ระบบ'); enterApp();
+});
+$('#chCancel').onclick=()=>{ pendingUser=null; showAuth('authLogin'); };
+function startSession(user,role,facKey){ sess={user,role,facKey,t:Date.now()}; try{sessionStorage.setItem('calib.sess',JSON.stringify(sess));}catch(e){} }
+function logout(msg){ if(sess) logAct('ออกจากระบบ',msg||''); sess=null; try{sessionStorage.removeItem('calib.sess');}catch(e){} clearTimeout(idleT); $$('dialog[open]').forEach(d=>d.close()); showAuth('authLogin'); if(msg) setErr('#liErr',msg); }
+function armIdle(){ clearTimeout(idleT); if(sess) idleT=setTimeout(()=>logout('ออกจากระบบอัตโนมัติ เนื่องจากไม่มีการใช้งานเกิน 30 นาที'),30*60000); }
+['click','keydown','pointermove','scroll'].forEach(ev=>document.addEventListener(ev,()=>{ if(sess&&(!armIdle._t||Date.now()-armIdle._t>20000)){ armIdle._t=Date.now(); armIdle(); } },{passive:true}));
+function enterApp(){
+  $('#auth').hidden=true; $('#appRoot').hidden=false;
+  const role=sess.role; $$('[data-roles]').forEach(el=>el.hidden=!el.dataset.roles.split(',').includes(role));
+  let nameTxt='กองสาธารณสุข อบจ.สกลนคร';
+  if(role==='fac'){ invFacKey=sess.facKey; ROUND=null; const f=BASE_FACS.find(x=>x.key===sess.facKey)||{name:store.inv.get(sess.facKey)?.name||'รพ.สต.'}; nameTxt=f.name; }
+  $('.roundchip').hidden=role==='fac'; $('#ucName').textContent=nameTxt; $('#ucRole').textContent=(role==='admin'?'ผู้ดูแลระบบ':'ผู้ใช้ระดับ รพ.สต.')+' · '+sess.user; $('#userChip').hidden=false;
+  $('nav.tabs [data-tab="overview"] .tl').textContent=role==='fac'?'ภาพรวม รพ.สต.':'ภาพรวมผู้บริหาร';
+  armIdle(); rebuild();
+  let k='overview'; try{ k=localStorage.getItem('calib.tab')||'overview'; }catch(e){}
+  const btn=$(`nav.tabs [data-tab="${k}"]`); showTab(btn&&!btn.hidden?k:'overview');
+}
+$('#ucOut').onclick=()=>logout('');
+$('#ucPw').onclick=()=>{ ['#pwOld','#pwNew','#pwNew2'].forEach(s=>$(s).value=''); setErr('#pwErr',''); openDlg($('#pwdlg')); };
+['#pwClose','#pwCancel'].forEach(s=>$(s).onclick=()=>$('#pwdlg').close());
+$('#pwForm').addEventListener('submit',async e=>{
+  e.preventDefault(); const u=users()[sess.user]; if(!u) return;
+  if(await hashPw($('#pwOld').value,u.salt)!==u.hash) return setErr('#pwErr','รหัสผ่านปัจจุบันไม่ถูกต้อง');
+  const pw=$('#pwNew').value; if(pw!==$('#pwNew2').value) return setErr('#pwErr','รหัสผ่านใหม่ทั้งสองช่องไม่ตรงกัน');
+  if(pw.length<8||pw===sess.user) return setErr('#pwErr','รหัสผ่านใหม่ต้องยาวอย่างน้อย 8 ตัว และไม่ซ้ำกับชื่อผู้ใช้');
+  const c=await mkCred(pw); const me=sess.user; await saveUsers(us=>{ us[me]={...us[me],...c,mustChange:false,changed:new Date().toISOString()}; }).catch(()=>{});
+  $('#pwdlg').close(); logAct('เปลี่ยนรหัสผ่าน'); toast('เปลี่ยนรหัสผ่านแล้ว');
+});
+document.addEventListener('click',e=>{ if(e.target.closest('[data-open-privacy]')) openDlg($('#ppdlg')); });
+$('#ppClose').onclick=()=>$('#ppdlg').close();
+
+/* ---------- users tab (admin) ---------- */
+function allFacs(){ const m=buildMain(); return [...m.facs].sort((a,b)=>(a.zone||99)-(b.zone||99)||a.name.localeCompare(b.name,'th')); }
+function renderUsers(){
+  if(!isAdmin()) return;
+  $('#cfgForce').checked=cfg().forceChange!==false;
+  const q=$('#usrSearch').value.trim(); const facs=allFacs(); let n=0;
+  const rows=facs.map(f=>{ const e=facUserOf(f.key); if(e) n++; return {f,code:e?e[0]:'',u:e?e[1]:null}; }).filter(r=>!q||r.f.name.includes(q)||r.code.includes(q));
+  $('#usrCount').textContent=`กำหนดรหัสแล้ว ${n} จาก ${facs.length} แห่ง`;
+  $('#usrTable tbody').innerHTML=rows.map(r=>{ const u=r.u; const locked=u&&u.lockUntil&&new Date(u.lockUntil)>new Date();
+    const st=!u?'<span class="chip neutral">ยังไม่กำหนดรหัส</span>':locked?'<span class="chip crit">ถูกล็อกชั่วคราว</span>':u.mustChange?'<span class="chip warn">รอเปลี่ยนรหัสผ่านครั้งแรก</span>':u.changed?'<span class="chip good">ใช้งานอยู่ · เปลี่ยนรหัสแล้ว</span>':'<span class="chip info">พร้อมใช้ · รหัสผ่านเริ่มต้น</span>';
+    return `<tr><td>${esc(r.f.name)}</td><td class="num">${r.f.zone||'ใหม่'}</td><td><input class="codein" data-fk="${r.f.key}" value="${esc(r.code)}" inputmode="numeric" maxlength="9" placeholder="5 หลัก" aria-label="รหัสสถานพยาบาล ${esc(r.f.name)}"></td><td>${st}</td><td class="hint">${u&&u.last?thDate(u.last):'—'}</td><td>${u?`<button class="btn sm" data-reset="${esc(r.code)}">รีเซ็ตรหัสผ่าน</button>`:''}</td></tr>`; }).join('');
+  $('#admTable tbody').innerHTML=Object.entries(users()).filter(([,u])=>u.role==='admin').map(([n,u])=>`<tr><td class="mono">${esc(n)}${n===sess.user?' <span class="chip info plain">คุณ</span>':''}</td><td class="hint">${u.last?thDate(u.last):'—'}</td><td>${n!==sess.user?`<button class="btn sm danger" data-deladm="${esc(n)}">ลบบัญชี</button>`:''}</td></tr>`).join('');
+  renderLog();
+}
+$('#usrSearch').oninput=renderUsers;
+$('#cfgForce').onchange=e=>{ saveCfg({forceChange:e.target.checked}); logAct('ตั้งค่าบังคับเปลี่ยนรหัสผ่านครั้งแรก',e.target.checked?'เปิด':'ปิด'); };
+async function applyCodes(pairs){ // [[facKey, code]]
+  const msg=$('#usrMsg'); const cur=users(); const taken=new Map(Object.entries(cur).map(([n,u])=>[n,u]));
+  const todo=[], errs=[]; const seen=new Set();
+  for(const [fk,codeRaw] of pairs){ const code=String(codeRaw||'').trim(); const old=facUserOf(fk);
+    if(!code){ continue; }
+    if(!/^\d{5,9}$/.test(code)){ errs.push(`${code}: ต้องเป็นตัวเลข 5 หลัก`); continue; }
+    if(old&&old[0]===code) continue;
+    const t=taken.get(code); if((t&&!(t.role==='fac'&&t.facKey===fk))||seen.has(code)){ errs.push(`${code}: ซ้ำกับบัญชีอื่น`); continue; }
+    seen.add(code); todo.push({fk,code,old:old?old[0]:null}); }
+  if(!todo.length){ msg.textContent=errs.length?'ไม่ได้บันทึก · '+errs.slice(0,4).join(' · '):'ไม่มีรหัสใหม่ให้บันทึก'; return; }
+  msg.textContent=`กำลังสร้างบัญชี ${todo.length} แห่ง…`;
+  const force=cfg().forceChange!==false; const creds=[];
+  for(const t of todo) creds.push(await mkCred(t.code));
+  await saveUsers(us=>{ todo.forEach((t,i)=>{ if(t.old) delete us[t.old]; us[t.code]={role:'fac',facKey:t.fk,...creds[i],mustChange:force,fails:0,at:new Date().toISOString()}; }); }).catch(()=>{});
+  logAct('กำหนดรหัสสถานพยาบาล',`${todo.length} แห่ง`);
+  msg.textContent=`บันทึกแล้ว ${todo.length} แห่ง · ชื่อผู้ใช้และรหัสผ่านเริ่มต้น = รหัสสถานพยาบาล`+(errs.length?` · ข้าม ${errs.length} รายการ: ${errs.slice(0,3).join(' · ')}`:'');
+  renderUsers();
+}
+$('#usrSaveAll').onclick=()=>applyCodes($$('#usrTable .codein').map(i=>[i.dataset.fk,i.value]));
+$('#usrTable tbody').addEventListener('click',async e=>{ const b=e.target.closest('[data-reset]'); if(!b) return; const code=b.dataset.reset; const c=await mkCred(code); const force=cfg().forceChange!==false;
+  await saveUsers(us=>{ if(us[code]) us[code]={...us[code],...c,mustChange:force,fails:0,lockUntil:null,changed:null}; }).catch(()=>{}); logAct('รีเซ็ตรหัสผ่าน รพ.สต.',code); toast('รีเซ็ตรหัสผ่านเป็นรหัสสถานพยาบาลแล้ว'); renderUsers(); });
+$('#admForm').addEventListener('submit',async e=>{ e.preventDefault(); const n=$('#admUser').value.trim(), pw=$('#admPw').value; if(users()[n]) return toast('ชื่อผู้ใช้นี้มีอยู่แล้ว'); if(/^\d+$/.test(n)) return toast('ชื่อผู้ดูแลต้องมีตัวอักษร ไม่ใช่ตัวเลขล้วน');
+  const c=await mkCred(pw); await saveUsers(us=>{us[n]={role:'admin',...c,mustChange:false,at:new Date().toISOString()};}).catch(()=>{}); $('#admUser').value=$('#admPw').value=''; logAct('เพิ่มบัญชีผู้ดูแล',n); renderUsers(); });
+$('#admTable tbody').addEventListener('click',async e=>{ const b=e.target.closest('[data-deladm]'); if(!b) return; if(b.dataset.armed!=='1'){ b.dataset.armed='1'; b.textContent='กดอีกครั้งเพื่อยืนยัน'; return; } const n=b.dataset.deladm; await saveUsers(us=>{delete us[n];}).catch(()=>{}); logAct('ลบบัญชีผู้ดูแล',n); renderUsers(); });
+$('#usrTpl').onclick=async()=>{ const wb=new ExcelJS.Workbook(); simpleSheet(wb,'รหัสสถานพยาบาล',['โซน','รพ.สต.','รหัสสถานพยาบาล (5 หลัก)','รหัสอ้างอิงระบบ (ห้ามแก้)'],allFacs().map(f=>[f.zone||'ใหม่',f.name,(facUserOf(f.key)||[''])[0],f.key]),[8,34,26,26]); await saveWb(wb,'แบบกรอกรหัสสถานพยาบาล_รพสต.xlsx'); };
+$('#usrFile').onchange=async e=>{ const f=e.target.files[0]; e.target.value=''; if(!f) return; const msg=$('#usrMsg');
+  try{ const wb=new ExcelJS.Workbook(); await wb.xlsx.load(await f.arrayBuffer()); const pairs=[]; const facs=allFacs(); let miss=0;
+    wb.eachSheet(ws=>{ let hr=0,cN=0,cC=0,cK=0; for(let r=1;r<=6&&!hr;r++){ const v=(ws.getRow(r).values||[]).map(cstr); v.forEach((s,i)=>{ if(/รหัสสถานพยาบาล|รหัสหน่วยบริการ|hcode/i.test(s)) cC=i; else if(/รพ\.?สต|หน่วยบริการ|ชื่อ/.test(s)) cN=cN||i; else if(/อ้างอิง/.test(s)) cK=i; }); if(cC&&(cN||cK)) hr=r; }
+      if(!hr) return;
+      ws.eachRow((row,rn)=>{ if(rn<=hr) return; const v=row.values; const code=cstr(v[cC]).replace(/\D/g,''); if(!code) return; const key=cK?cstr(v[cK]):''; let fac=key?facs.find(x=>x.key===key):null; if(!fac&&cN){ const n=normFac(v[cN]); const c=facs.filter(x=>x.name===n); if(c.length===1) fac=c[0]; } if(fac) pairs.push([fac.key,code]); else miss++; }); });
+    if(!pairs.length){ msg.textContent='ไม่พบคอลัมน์ “รพ.สต.” และ “รหัสสถานพยาบาล” ในไฟล์ หรือชื่อไม่ตรงกับในระบบ'; return; }
+    await applyCodes(pairs); if(miss) msg.textContent+=` · จับคู่ชื่อไม่ได้ ${miss} แถว (ชื่อซ้ำต่างโซนให้ใช้แบบกรอกที่ดาวน์โหลดจากระบบ)`;
+  }catch(err){ msg.textContent='อ่านไฟล์ไม่สำเร็จ: '+(err.message||err); } };
+
+/* ---------- removal with reason ---------- */
+let removing=null;
+function openRemove(fac,it){ removing={fac,it}; $('#rdItem').textContent=`${fac.name} · ${it.t.name} · ${it.id}`; $('#rdReason').value=it.st===2?'ชำรุด ซ่อมไม่ได้':''; $('#rdDetail').value=''; $('#rdRef').value=''; $('#rdDate').value=new Date().toLocaleDateString('sv'); openDlg($('#rdlg')); }
+['#rdClose','#rdCancel'].forEach(s=>$(s).onclick=()=>$('#rdlg').close());
+$('#rdForm').addEventListener('submit',e=>{
+  e.preventDefault(); if(!removing) return; const {fac,it}=removing; const reason=$('#rdReason').value; if(!reason) return;
+  const d=invDoc(fac); d.items=d.items||{}; const key=docId(it.id);
+  d.items[key]=stamp({...(d.items[key]||{}),id:it.id,type:(d.items[key]&&d.items[key].type)||it.t.name,removed:{reason,detail:$('#rdDetail').value.trim(),date:$('#rdDate').value,ref:$('#rdRef').value.trim(),by:sess.user,at:new Date().toISOString()}});
+  stamp(d); $('#rdlg').close(); if($('#edlg').open) $('#edlg').close();
+  const p=putDoc('inv',fac.key,d); logAct('นำเครื่องมือออกจากระบบ',`${it.id} · ${reason}`); rebuild(); p.then(()=>toast('นำออกจากระบบแล้ว · '+it.id),()=>{});
+});
+function restoreItem(fk,id){ const fac=buildMain().facs.find(f=>f.key===fk); if(!fac||!isAdmin()) return; const d=invDoc(fac); const key=docId(id); if(d.items&&d.items[key]){ delete d.items[key].removed; delete d.items[key].deleted; stamp(d.items[key]); } stamp(d); const p=putDoc('inv',fk,d); logAct('นำเครื่องมือกลับเข้าระบบ',id); rebuild(); p.then(()=>toast('นำกลับเข้าระบบแล้ว'),()=>{}); }
+function renderRemoved(){
+  const fac=curFac(); const rows=(DS.removed||[]).filter(it=>!fac||it.f===fac);
+  $('#rmCount').textContent=`${rows.length} รายการ`;
+  $('#rmTable tbody').innerHTML=rows.map(it=>{ const r=it.removed||{}; return `<tr><td class="mono">${esc(it.id)}</td><td>${esc(it.t.name)}<div class="hint">${esc([it.brand,it.model].filter(Boolean).join(' '))}</div></td><td><b>${esc(r.reason||'ไม่ระบุ')}</b><div class="hint">${esc(r.detail||'')}</div></td><td class="hint">${esc(r.date||'')}${r.ref?'<br>'+esc(r.ref):''}</td><td class="hint">${esc(r.by||'')}</td><td>${isAdmin()?`<button class="btn sm" data-restore="${esc(it.id)}" data-fk="${it.f.key}">นำกลับเข้าระบบ</button>`:''}</td></tr>`; }).join('')||'<tr><td colspan="6" class="hint">ยังไม่มีเครื่องมือที่นำออก</td></tr>';
+}
+$('#rmTable tbody').addEventListener('click',e=>{ const b=e.target.closest('[data-restore]'); if(b) restoreItem(b.dataset.fk,b.dataset.restore); });
+
+/* ---------- certificate files ---------- */
+let assetsApi=null, idbP=null;
+function idb(){ if(!idbP) idbP=new Promise((res,rej)=>{ const r=indexedDB.open('calibFiles',1); r.onupgradeneeded=()=>r.result.createObjectStore('f'); r.onsuccess=()=>res(r.result); r.onerror=()=>rej(r.error); }); return idbP; }
+const idbReq=(mode,fn)=>idb().then(d=>new Promise((res,rej)=>{ const tx=d.transaction('f',mode); const rq=fn(tx.objectStore('f')); tx.oncomplete=()=>res(rq.result); tx.onerror=()=>rej(tx.error); }));
+const fileMode=()=>assetsApi?'asset':(store.mode==='local'&&window.indexedDB?'idb':'none');
+async function filePut(key,file){ const m=fileMode(); if(m==='asset'){ const r=await assetsApi.upload(file,{type:'application/pdf'}); return {store:'asset',ref:r.id}; } if(m==='idb'){ await idbReq('readwrite',s=>s.put(file,key)); return {store:'idb',ref:key}; } return {store:'none',ref:''}; }
+async function fileBlob(m){ if(m.store==='asset'){ const r=await fetch('/_blob/'+m.ref); if(!r.ok) throw new Error('เปิดไฟล์ไม่ได้'); return await r.blob(); } if(m.store==='idb'){ const b=await idbReq('readonly',s=>s.get(m.ref)); if(!b) throw new Error('ไม่พบไฟล์ในเครื่องนี้'); return b; } throw new Error('รายการนี้บันทึกเฉพาะเลขใบรับรอง ไม่มีไฟล์แนบ'); }
+async function fileDel(m){ try{ if(m.store==='asset'&&assetsApi) await assetsApi.delete(m.ref); else if(m.store==='idb') await idbReq('readwrite',s=>s.delete(m.ref)); }catch(e){} }
+const certsOf=it=>store.cert.get(it.f.key)?.items?.[docId(it.id)]||{};
+const hasFile=it=>Object.values(certsOf(it)).some(c=>c&&c.store&&c.store!=='none');
+const hasCertAny=it=>Object.keys(certsOf(it)).length>0;
+const idParts=id=>{ const m=/^([A-Za-z]+)-?PCU-?(\d+)\/(\d+)-(\d+)$/.exec(String(id).trim()); return m?[m[1].toUpperCase(),+m[2],+m[3],+m[4]].join('|'):null; };
+function parseCertName(name){ const base=name.replace(/\.pdf$/i,''); const m=/([A-Za-z]{2,6})-?PCU-?(\d+)-(\d+)-(\d{2})(\d{2})(PAO_[A-Za-z0-9]+)/.exec(base); if(!m) return null; return {key:[m[1].toUpperCase(),+m[2],+m[3],+m[4]].join('|'),certNo:m[5]+m[6],year:2000+ +m[5]+543}; }
+async function attachCerts(list){ // [{it,file,certNo,year}]
+  const byFac=new Map(); const log=$('#certLog');
+  for(const x of list){ const k=docId(x.it.id)+'_'+x.year;
+    try{ const ref=await filePut(k,x.file); const meta={certNo:x.certNo,year:x.year,name:x.file.name.slice(0,120),size:x.file.size,...ref,at:new Date().toISOString(),by:sess.user};
+      if(!byFac.has(x.it.f.key)) byFac.set(x.it.f.key,clone(store.cert.get(x.it.f.key)||{items:{}}));
+      const d=byFac.get(x.it.f.key); d.items=d.items||{}; const ik=docId(x.it.id); d.items[ik]={...(d.items[ik]||{}),[x.year]:meta};
+      log.insertAdjacentHTML('afterbegin',`<div class="ok">✓ ${esc(x.file.name)} → ${esc(x.it.f.name)} · ${esc(x.it.id)} · ${esc(x.certNo)}${ref.store==='none'?' (บันทึกเลขใบรับรอง ไม่ได้เก็บไฟล์)':''}</div>`);
+    }catch(err){ log.insertAdjacentHTML('afterbegin',`<div class="bad">✗ ${esc(x.file.name)}: ${esc(err&&(err.message||err.code)||'อัปโหลดไม่สำเร็จ')}</div>`); } }
+  const ps=[]; for(const [fk,d] of byFac) ps.push(putDoc('cert',fk,stamp(d)));
+  if(byFac.size) logAct('อัปโหลดใบ cer',`${list.length} ไฟล์`);
+  renderCert(); await Promise.allSettled(ps);
+}
+async function certUpload(files){
+  if(!editable()) return toast('ไม่สามารถอัปโหลดในมุมมองนี้');
+  const idx=new Map(); for(const it of DS.items){ const k=idParts(it.id); if(k) idx.set(k,it); }
+  const list=[]; const log=$('#certLog');
+  for(const f of files){ if(!/\.pdf$/i.test(f.name)){ log.insertAdjacentHTML('afterbegin',`<div class="bad">✗ ${esc(f.name)}: รับเฉพาะไฟล์ PDF</div>`); continue; }
+    if(f.size>20*1024*1024){ log.insertAdjacentHTML('afterbegin',`<div class="bad">✗ ${esc(f.name)}: ไฟล์ใหญ่เกิน 20 MB</div>`); continue; }
+    const p=parseCertName(f.name); const it=p&&idx.get(p.key);
+    if(!it){ log.insertAdjacentHTML('afterbegin',`<div class="bad">✗ ${esc(f.name)}: ${p?(sess.role==='fac'?'ไม่ใช่เครื่องของ รพ.สต. นี้ หรือไม่พบรหัสเครื่องในทะเบียน':'ไม่พบรหัสเครื่องนี้ในทะเบียน'):'ชื่อไฟล์ไม่ตรงรูปแบบ ให้กด “แนบไฟล์” ที่แถวของเครื่อง'}</div>`); continue; }
+    list.push({it,file:f,certNo:p.certNo,year:p.year}); }
+  if(list.length) await attachCerts(list);
+}
+(function(){ const d=$('#certDrop'); $('#certFiles').onchange=e=>{ const fs=[...e.target.files]; e.target.value=''; if(fs.length) certUpload(fs); };
+  ['dragenter','dragover'].forEach(ev=>d.addEventListener(ev,e=>{e.preventDefault(); d.classList.add('over');})); ['dragleave','drop'].forEach(ev=>d.addEventListener(ev,e=>{e.preventDefault(); d.classList.remove('over');}));
+  d.addEventListener('drop',e=>{ const fs=[...e.dataTransfer.files]; if(fs.length) certUpload(fs); }); })();
+let certOneFor=null, certFacFilter='all';
+$('#certOne').onchange=async e=>{ const f=e.target.files[0]; e.target.value=''; if(!f||!certOneFor) return; const it=DS.items.find(x=>x.id===certOneFor); if(!it) return; const p=parseCertName(f.name); const yr=new Date().getFullYear()+543;
+  await attachCerts([{it,file:f,certNo:p?p.certNo:f.name.replace(/\.pdf$/i,'').slice(0,60),year:p?p.year:yr}]); };
+async function openCert(it,year){ const m=certsOf(it)[year]; if(!m) return; try{ const b=await fileBlob(m); const name=m.name||`${it.id.replace(/\//g,'-')}_${m.certNo}.pdf`; logAct('เปิดใบ cer',`${it.id} · ${m.certNo}`);
+    if(downloads){ try{ await downloads.save({filename:name,data:b}); }catch(e){} return; }
+    const url=URL.createObjectURL(new Blob([b],{type:'application/pdf'})); const a=document.createElement('a'); a.href=url; a.target='_blank'; a.rel='noopener'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),60000);
+  }catch(err){ toast(err.message||'เปิดไฟล์ไม่สำเร็จ'); } }
+async function delCert(it,year){ const d=clone(store.cert.get(it.f.key)||{items:{}}); const ik=docId(it.id); const m=d.items?.[ik]?.[year]; if(!m) return; await fileDel(m); delete d.items[ik][year]; if(!Object.keys(d.items[ik]).length) delete d.items[ik]; const p=putDoc('cert',it.f.key,stamp(d)); logAct('ลบใบ cer',`${it.id} · ${m.certNo}`); renderCert(); p.catch(()=>{}); }
+function renderCert(){
+  if(!DS||$('#v-cert').hidden) return;
+  const items=DS.items; const nFile=items.filter(hasFile).length, nNo=items.filter(it=>it.cert||hasCertAny(it)).length;
+  $('#certKpis').innerHTML=[['k-blue','เครื่องมือในทะเบียน',fmt(items.length),'เครื่อง'],['k-violet','มีเลขใบรับรอง',fmt(nNo),`${pct(nNo,items.length,1)}% ของทั้งหมด`],['k-teal','มีไฟล์ใบ cer แนบ',fmt(nFile),`${pct(nFile,items.length,1)}% ของทั้งหมด`],['k-orange','ยังไม่มีไฟล์',fmt(items.length-nFile),'เครื่อง']].map(([c,l,v,x])=>`<div class="kpi ${c}"><div class="l">${l}</div><div class="v num">${v}</div><div class="s">${x}</div></div>`).join('');
+  const fm=fileMode(); const sn=$('#certStoreNote');
+  sn.className='syncnote '+(fm==='none'?'off':fm==='asset'?'ok':'off');
+  sn.textContent=fm==='asset'?'ไฟล์เก็บในพื้นที่กลางของระบบ ทุกคนที่มีสิทธิ์เปิดดูได้':fm==='idb'?'ไฟล์ PDF เก็บในเบราว์เซอร์เครื่องนี้เท่านั้น เครื่องอื่นจะเห็นเฉพาะเลขใบรับรอง':'บัญชีที่เปิดหน้านี้ไม่มีสิทธิ์เก็บไฟล์ในพื้นที่กลาง ระบบจะบันทึกเฉพาะเลขใบรับรองและชื่อไฟล์';
+  if(isAdmin()){ let rows=S.byFac.map(f=>({f,n:f.total,c:f.items.filter(hasFile).length})).filter(r=>certFacFilter==='all'||r.c<r.n).sort((a,b)=>(a.f.key.zone||99)-(b.f.key.zone||99)||a.f.key.name.localeCompare(b.f.key.name,'th'));
+    $('#certFacTable tbody').innerHTML=rows.map(r=>{ const p=r.n?100*r.c/r.n:0; return `<tr class="click" data-fk="${r.f.key.key}"><td>${esc(r.f.key.name)}</td><td class="num">${r.f.key.zone||'ใหม่'}</td><td class="r num">${r.n}</td><td class="r num">${r.c}</td><td class="num"><span class="minibar"><i style="width:${p}%;background:${p>=100?'var(--good)':p>0?'var(--warn)':'var(--crit)'}"></i></span>${p.toFixed(0)}%</td></tr>`; }).join(''); }
+  const sel=$('#certFac'); const fl=facList(); sel.innerHTML=fl.map(f=>`<option value="${f.key}">${esc(f.name)}</option>`).join(''); if(!fl.find(f=>f.key===invFacKey)) invFacKey=fl[0]?.key; sel.value=invFacKey; sel.disabled=!isAdmin();
+  const fac=curFac(); if(!fac) return; $('#certTitle').textContent='ใบ cer รายเครื่อง · '+fac.name;
+  const q=$('#certSearch').value.trim().toLowerCase(), has=$('#certHas').value; const can=editable();
+  const rows=items.filter(it=>it.f===fac).filter(it=>(has===''||(has==='1')===hasFile(it))&&(!q||[it.id,it.t.name,it.cert,...Object.values(certsOf(it)).map(c=>c.certNo)].join(' ').toLowerCase().includes(q))).sort((a,b)=>a.t.name.localeCompare(b.t.name,'th')||a.id.localeCompare(b.id));
+  $('#certCount').textContent=`${rows.length} เครื่อง`;
+  $('#certTable tbody').innerHTML=rows.map(it=>{ const cs=certsOf(it); const pills=Object.keys(cs).sort().reverse().map(y=>{ const c=cs[y]; const f=c.store&&c.store!=='none'; return `<span class="certpill ${f?'':'nofile'}" title="${esc(c.name||'')} · ${thDate(c.at)} · ${esc(c.by||'')}">${y} · ${esc(c.certNo)}${f?`<button data-open="${esc(it.id)}" data-y="${y}">เปิด</button>`:''}${can?`<button data-delc="${esc(it.id)}" data-y="${y}" aria-label="ลบ">×</button>`:''}</span>`; }).join('');
+    return `<tr><td class="mono">${esc(it.id)}</td><td>${esc(it.t.name)}</td><td><span class="chip ${STL[it.st][1]}">${STL[it.st][0]}</span></td><td class="mono hint">${esc(it.cert)||'—'}</td><td><div class="certlist">${pills||'<span class="hint">ยังไม่มี</span>'}</div></td><td><button class="btn sm" data-attach="${esc(it.id)}" ${can?'':'disabled'}>แนบไฟล์</button></td></tr>`; }).join('')||'<tr><td colspan="6" class="hint">ไม่มีรายการ</td></tr>';
+}
+$('#certFac').onchange=e=>{ invFacKey=e.target.value; renderCert(); };
+$('#certSearch').oninput=renderCert; $('#certHas').onchange=renderCert;
+$$('#certSeg button').forEach(b=>b.onclick=()=>{ certFacFilter=b.dataset.v; $$('#certSeg button').forEach(x=>x.setAttribute('aria-pressed',x===b)); renderCert(); });
+$('#certFacTable tbody').addEventListener('click',e=>{ const tr=e.target.closest('tr[data-fk]'); if(tr){ invFacKey=tr.dataset.fk; renderCert(); $('#certTitle').scrollIntoView({behavior:'smooth',block:'start'}); } });
+$('#certTable tbody').addEventListener('click',e=>{ const t=e.target; const it=id=>DS.items.find(x=>x.id===id);
+  if(t.dataset.open) openCert(it(t.dataset.open),t.dataset.y); else if(t.dataset.delc){ if(t.dataset.armed!=='1'){ t.dataset.armed='1'; t.textContent='ลบ?'; return; } delCert(it(t.dataset.delc),t.dataset.y); } else if(t.dataset.attach){ certOneFor=t.dataset.attach; $('#certOne').click(); } });
+$('#certExport').onclick=async()=>{
+  const wb=new ExcelJS.Workbook();
+  simpleSheet(wb,'สรุปรายหน่วยบริการ',['โซน','รพ.สต.','เครื่องมือ','มีเลขใบรับรอง','มีไฟล์ใบ cer','ยังไม่มีไฟล์','ความครบถ้วน (%)'],[...S.byFac].sort((a,b)=>(a.key.zone||99)-(b.key.zone||99)||a.key.name.localeCompare(b.key.name,'th')).map(f=>{ const c=f.items.filter(hasFile).length; return [f.key.zone||'ใหม่',f.key.name,f.total,f.items.filter(it=>it.cert||hasCertAny(it)).length,c,f.total-c,f.total?+(100*c/f.total).toFixed(1):0]; }),[8,32,12,16,14,14,18]);
+  const rows=[]; [...DS.items].sort((a,b)=>(a.f.zone||99)-(b.f.zone||99)||a.f.name.localeCompare(b.f.name,'th')||a.id.localeCompare(b.id)).forEach(it=>{ const cs=certsOf(it); const ys=Object.keys(cs).sort().reverse(); if(!ys.length) rows.push([it.f.zone||'ใหม่',it.f.name,it.id,it.t.name,STL[it.st][0],it.cert,'','','ไม่มี','','']); ys.forEach(y=>{ const c=cs[y]; rows.push([it.f.zone||'ใหม่',it.f.name,it.id,it.t.name,STL[it.st][0],it.cert,y,c.certNo,c.store&&c.store!=='none'?'มี':'ไม่มี (เฉพาะเลข)',c.name||'',thDate(c.at)+(c.by?' · '+c.by:'')]); }); });
+  simpleSheet(wb,'รายการใบรับรอง',['โซน','รพ.สต.','รหัสเครื่อง','ประเภท','ผลสอบเทียบ','เลขใบรับรองรอบ 2568','ปี พ.ศ. ของใบที่แนบ','เลขใบรับรองที่แนบ','ไฟล์','ชื่อไฟล์','อัปโหลดเมื่อ / โดย'],rows,[7,28,18,34,12,24,14,24,14,36,28]);
+  logAct('ออกรายงานใบ cer'); await saveWb(wb,sess.role==='fac'?`รายงานใบcer_${curFac()?.name||''}.xlsx`:'รายงานใบรับรองผลสอบเทียบ_ทุกรพสต.xlsx');
+};
+
+/* ---------- annual calibration survey ---------- */
+let svYearSel=null, svFacKey=null, svW=null, svFilter='all';
+const svDocKey=(y,fk)=>y+'_'+fk;
+const svDoc=(y,fk)=>store.survey.get(svDocKey(y,fk));
+const svSend=(doc,it)=>!(doc&&doc.sel&&doc.sel[docId(it.id)]&&doc.sel[docId(it.id)].send===false);
+function svLoadW(force){ const k=svDocKey(svYearSel,svFacKey); if(!force&&svW&&svW.k===k&&svW.dirty) return; const d=svDoc(svYearSel,svFacKey); svW={k,sel:clone((d&&d.sel)||{}),reporter:(d&&d.reporter)||'',phone:(d&&d.phone)||'',note:(d&&d.note)||'',dirty:false}; $('#svRep').value=svW.reporter; $('#svPhone').value=svW.phone; $('#svNote').value=svW.note; }
+function renderSurvey(){
+  if(!DS||$('#v-plan').hidden||!sess) return;
+  const sv=cfg().surveys; const years=Object.keys(sv).sort(); if(!svYearSel||!sv[svYearSel]) svYearSel=years[years.length-1];
+  $('#svYear').innerHTML=years.map(y=>`<option value="${y}">${y}</option>`).join(''); $('#svYear').value=svYearSel;
+  const round=sv[svYearSel]||{open:true}; const open=round.open!==false;
+  $('#svState').innerHTML=(open?'<span class="chip good">เปิดรับแบบสำรวจ</span>':'<span class="chip neutral">ปิดรับแล้ว</span>')+(round.deadline?` <span class="hint">กำหนดส่ง ${esc(round.deadline)}</span>`:'');
+  const main=DS; const facs=facList();
+  if(sess.role==='fac') svFacKey=sess.facKey; else if(!svFacKey||!facs.find(f=>f.key===svFacKey)) svFacKey=invFacKey&&facs.find(f=>f.key===invFacKey)?invFacKey:facs[0]?.key;
+  if(isAdmin()){
+    $('#svDeadline').value=round.deadline||''; $('#svToggle').textContent=open?'ปิดรับแบบสำรวจ':'เปิดรับแบบสำรวจอีกครั้ง';
+    let nSub=0,conf=0,est=0,notSend=0; const byType=new Map(); const rows=[];
+    for(const f of S.byFac){ const d=svDoc(svYearSel,f.key.key); const sub=d&&d.status==='submitted'; if(sub) nSub++; let s=0,ns=0;
+      for(const it of f.items){ const snd=svSend(d,it); if(snd) s++; else ns++; if(snd){ let t=byType.get(it.t.name); if(!t){ t={c:0,e:0}; byType.set(it.t.name,t);} if(sub) t.c++; else t.e++; } }
+      if(sub){ conf+=s; notSend+=ns; } else est+=s; rows.push({f,d,sub,s,ns}); }
+    $('#svKpis').innerHTML=[['k-green','ส่งแบบสำรวจแล้ว',`${nSub} / ${S.nFac} แห่ง`,`${pct(nSub,S.nFac,0)}%`],['k-blue','ยืนยันส่งสอบเทียบ',fmt(conf)+' เครื่อง','จากแห่งที่ส่งแบบแล้ว'],['k-orange','ประมาณจากแห่งที่ยังไม่ส่ง',fmt(est)+' เครื่อง','นับทุกเครื่องในทะเบียน'],['k-violet','รวมสำหรับจัดจ้าง',fmt(conf+est)+' เครื่อง',`แจ้งไม่ส่ง ${fmt(notSend)} เครื่อง`]].map(([c,l,v,x])=>`<div class="kpi ${c}"><div class="l">${l}</div><div class="v num">${v}</div><div class="s">${x}</div></div>`).join('');
+    $('#svFacTable tbody').innerHTML=rows.filter(r=>svFilter==='all'||!r.sub).sort((a,b)=>(a.f.key.zone||99)-(b.f.key.zone||99)||a.f.key.name.localeCompare(b.f.key.name,'th')).map(r=>`<tr class="click" data-fk="${r.f.key.key}"><td>${esc(r.f.key.name)}</td><td>${r.sub?'<span class="chip good">ส่งแล้ว</span>':r.d?'<span class="chip warn">ร่าง</span>':'<span class="chip neutral">ยังไม่ส่ง</span>'}</td><td class="r num">${r.s}</td><td class="r num">${r.ns||'<span class="hint">0</span>'}</td><td class="hint">${r.sub?thDate(r.d.at):'—'}</td></tr>`).join('');
+    $('#svTypeTable tbody').innerHTML=[...byType].sort((a,b)=>(b[1].c+b[1].e)-(a[1].c+a[1].e)).map(([n,t])=>`<tr><td>${esc(n)}</td><td class="r num">${fmt(t.c)}</td><td class="r num">${fmt(t.e)}</td><td class="r num"><b>${fmt(t.c+t.e)}</b></td></tr>`).join('');
+    $('#svFac').innerHTML=facs.map(f=>`<option value="${f.key}">${esc(f.name)}</option>`).join(''); $('#svFac').value=svFacKey;
+  }
+  const fac=facs.find(f=>f.key===svFacKey); if(!fac) return; svLoadW(false);
+  const d=svDoc(svYearSel,svFacKey); const can=editable()&&(open||isAdmin());
+  $('#svFormTitle').textContent=`แบบสำรวจปีงบ ${svYearSel} · ${fac.name}`;
+  $('#svFormState').innerHTML=d&&d.status==='submitted'?`<span class="chip good">ส่งแล้ว ${thDate(d.at)}</span>`:d?'<span class="chip warn">บันทึกร่างไว้ ยังไม่ส่ง</span>':'<span class="chip neutral">ยังไม่ได้กรอก</span>';
+  const its=main.items.filter(it=>it.f===fac).sort((a,b)=>a.t.name.localeCompare(b.t.name,'th')||a.id.localeCompare(b.id));
+  let n=0; const why=['ชำรุด รอซ่อม/จำหน่าย','เลิกใช้งาน','สอบเทียบแล้วโดยหน่วยงานอื่น','ไม่อยู่ในเกณฑ์ต้องสอบเทียบ','อื่น ๆ'];
+  $('#svTable tbody').innerHTML=its.map(it=>{ const k=docId(it.id); const s=svW.sel[k]; const snd=!(s&&s.send===false); if(snd) n++;
+    return `<tr><td><input type="checkbox" class="rowsel" data-sv="${k}" ${snd?'checked':''} ${can?'':'disabled'} aria-label="ส่ง ${esc(it.id)}"></td><td class="mono">${esc(it.id)}</td><td>${esc(it.t.name)}</td><td class="hint">${esc([it.brand,it.model].filter(Boolean).join(' ')||'—')}</td><td><span class="chip ${STL[it.st][1]}">${STL[it.st][0]}</span></td><td>${snd?'':`<select class="planin" data-svwhy="${k}" ${can?'':'disabled'}><option value="">— ระบุเหตุผล —</option>${why.map(w=>`<option ${s&&s.why===w?'selected':''}>${w}</option>`).join('')}</select>`}</td></tr>`; }).join('')||'<tr><td colspan="6" class="hint">ยังไม่มีเครื่องมือในทะเบียน ให้เพิ่มที่แท็บ “ทะเบียนเครื่องมือ” ก่อน</td></tr>';
+  $('#svCount').textContent=`จะส่ง ${n} จาก ${its.length} เครื่อง`;
+  ['#svDraft','#svSubmit','#svAll','#svNone','#svRep','#svPhone','#svNote'].forEach(s=>$(s).disabled=!can);
+}
+$('#svYear').onchange=e=>{ svYearSel=e.target.value; svW=null; renderSurvey(); };
+$('#svFac').onchange=e=>{ svFacKey=e.target.value; svW=null; renderSurvey(); };
+$('#svFacTable tbody').addEventListener('click',e=>{ const tr=e.target.closest('tr[data-fk]'); if(tr){ svFacKey=tr.dataset.fk; svW=null; renderSurvey(); $('#svFormTitle').scrollIntoView({behavior:'smooth',block:'start'}); } });
+$$('#svSeg button').forEach(b=>b.onclick=()=>{ svFilter=b.dataset.v; $$('#svSeg button').forEach(x=>x.setAttribute('aria-pressed',x===b)); renderSurvey(); });
+$('#svTable tbody').addEventListener('change',e=>{ const t=e.target; if(t.dataset.sv){ if(t.checked) delete svW.sel[t.dataset.sv]; else svW.sel[t.dataset.sv]={send:false,why:''}; svW.dirty=true; renderSurvey(); } else if(t.dataset.svwhy){ svW.sel[t.dataset.svwhy]={send:false,why:t.value}; svW.dirty=true; } });
+['#svRep','#svPhone','#svNote'].forEach(s=>$(s).addEventListener('input',()=>{ if(svW){ svW.reporter=$('#svRep').value; svW.phone=$('#svPhone').value; svW.note=$('#svNote').value; svW.dirty=true; } }));
+$('#svAll').onclick=()=>{ svW.sel={}; svW.dirty=true; renderSurvey(); };
+$('#svNone').onclick=()=>{ DS.items.filter(it=>it.f.key===svFacKey).forEach(it=>{ const k=docId(it.id); svW.sel[k]=svW.sel[k]&&svW.sel[k].send===false?svW.sel[k]:{send:false,why:''}; }); svW.dirty=true; renderSurvey(); };
+function svSave(status){
+  const its=DS.items.filter(it=>it.f.key===svFacKey); const valid=new Set(its.map(it=>docId(it.id)));
+  const sel={}; for(const [k,v] of Object.entries(svW.sel)) if(valid.has(k)&&v.send===false) sel[k]={send:false,why:v.why||''};
+  if(status==='submitted'&&Object.values(sel).some(v=>!v.why)){ toast('กรุณาระบุเหตุผลของเครื่องที่ไม่ส่งให้ครบ'); return; }
+  const doc=stamp({year:svYearSel,facKey:svFacKey,sel,nSend:its.length-Object.keys(sel).length,nTotal:its.length,reporter:svW.reporter.trim().slice(0,80),phone:svW.phone.trim().slice(0,30),note:svW.note.trim().slice(0,500),status});
+  svW.dirty=false; const p=putDoc('survey',svDocKey(svYearSel,svFacKey),doc); logAct(status==='submitted'?'ส่งแบบสำรวจประจำปี':'บันทึกร่างแบบสำรวจ',`ปีงบ ${svYearSel} · ส่ง ${doc.nSend}/${doc.nTotal}`); renderSurvey(); p.then(()=>toast(status==='submitted'?'ส่งแบบสำรวจแล้ว':'บันทึกร่างแล้ว'),()=>{});
+}
+$('#svDraft').onclick=()=>svSave('draft'); $('#svSubmit').onclick=()=>svSave('submitted');
+$('#svOpenNew').onclick=()=>{ const y=String(+$('#svNewYear').value||''); if(!/^25\d\d$/.test(y)) return toast('กรอกปีงบประมาณ พ.ศ. 4 หลัก'); const sv=clone(cfg().surveys); if(sv[y]) return toast('มีรอบปีงบ '+y+' แล้ว'); sv[y]={open:true,deadline:''}; svYearSel=y; svW=null; $('#svNewYear').value=''; saveCfg({surveys:sv}); logAct('เปิดรอบสำรวจประจำปี','ปีงบ '+y); renderSurvey(); };
+$('#svSaveDl').onclick=()=>{ const sv=clone(cfg().surveys); sv[svYearSel]={...(sv[svYearSel]||{open:true}),deadline:$('#svDeadline').value.trim()}; saveCfg({surveys:sv}); renderSurvey(); toast('บันทึกกำหนดส่งแล้ว'); };
+$('#svToggle').onclick=()=>{ const sv=clone(cfg().surveys); const r=sv[svYearSel]||{open:true}; r.open=r.open===false; sv[svYearSel]=r; saveCfg({surveys:sv}); logAct(r.open?'เปิดรับแบบสำรวจ':'ปิดรับแบบสำรวจ','ปีงบ '+svYearSel); renderSurvey(); };
+$('#svExport').onclick=async()=>{
+  const wb=new ExcelJS.Workbook(); const byType=new Map(), facRows=[], itemRows=[];
+  for(const f of [...S.byFac].sort((a,b)=>(a.key.zone||99)-(b.key.zone||99)||a.key.name.localeCompare(b.key.name,'th'))){ const d=svDoc(svYearSel,f.key.key); const sub=d&&d.status==='submitted'; let s=0,ns=0;
+    for(const it of [...f.items].sort((a,b)=>a.id.localeCompare(b.id))){ const snd=svSend(d,it); if(snd){ s++; let t=byType.get(it.t.name); if(!t){ t={cat:it.t.cat,c:0,e:0}; byType.set(it.t.name,t);} if(sub) t.c++; else t.e++; } else ns++;
+      itemRows.push([f.key.zone||'ใหม่',f.key.name,it.id,it.t.name,it.brand,it.model,it.sn,it.assetNo,STL[it.st][0],snd?'ส่ง':'ไม่ส่ง',snd?'':(d.sel[docId(it.id)].why||''),sub?'ยืนยันแล้ว':'ประมาณ (ยังไม่ส่งแบบ)']); }
+    facRows.push([f.key.zone||'ใหม่',f.key.name,sub?'ส่งแล้ว':d?'ร่าง':'ยังไม่ส่ง',f.total,s,ns,sub?thDate(d.at):'',d?d.reporter||'':'',d?d.phone||'':'',d?d.note||'':'']); }
+  simpleSheet(wb,'สรุปตามประเภท',['ประเภทเครื่องมือ','กลุ่มงาน','ยืนยันแล้ว','ประมาณ (ยังไม่ส่งแบบ)','รวม (เครื่อง)'],[...byType].sort((a,b)=>(b[1].c+b[1].e)-(a[1].c+a[1].e)).map(([n,t])=>[n,t.cat,t.c,t.e,t.c+t.e]),[44,28,14,22,14]);
+  simpleSheet(wb,'รายหน่วยบริการ',['โซน','รพ.สต.','สถานะ','เครื่องในทะเบียน','ส่งสอบเทียบ','ไม่ส่ง','วันที่ส่งแบบ','ผู้รายงาน','เบอร์ติดต่อ','หมายเหตุ'],facRows,[7,30,12,16,14,10,22,26,16,36]);
+  simpleSheet(wb,'รายการเครื่องมือ',['โซน','รพ.สต.','รหัสเครื่อง','ประเภท','ยี่ห้อ','รุ่น','S/N','เลขครุภัณฑ์','ผลล่าสุด','ส่งสอบเทียบ','เหตุผลที่ไม่ส่ง','สถานะข้อมูล'],itemRows,[7,28,18,34,16,16,18,18,12,12,26,22]);
+  logAct('ส่งออกสรุปแบบสำรวจ','ปีงบ '+svYearSel); await saveWb(wb,`สรุปเครื่องมือส่งสอบเทียบ_ปีงบ${svYearSel}.xlsx`);
+};
+
 /* ---------- render orchestration ---------- */
 function rebuild(){
   const main=buildMain(); if(!BASE_S) BASE_S=stats({items:main.items.filter(i=>i.src!=='new'),facs:main.facs.filter(f=>!f.isNew)});
-  DS=ROUND||main; S=stats(DS);
+  let ds=ROUND||main;
+  if(sess&&sess.role==='fac'){ const f=ds.facs.find(x=>x.key===sess.facKey); ds={...ds,items:ds.items.filter(i=>i.f===f),facs:f?[f]:[],removed:(ds.removed||[]).filter(i=>i.f===f)}; }
+  DS=ds; S=stats(DS);
   $('#roundLabel').textContent=ROUND?ROUND.label:ROUND_LABEL;
   $('#roundSrc').textContent=ROUND?'ผลรอบที่นำเข้า (ดูอย่างเดียว)':'รายงานผู้รับจ้าง + ทะเบียนที่ปรับปรุง';
   $('#roundBanner').hidden=!ROUND; if(ROUND) $('#roundBannerTxt').textContent=`กำลังแสดงผลรอบที่นำเข้า “${ROUND.label}” · การแก้ไขทะเบียนใช้ได้ในทะเบียนหลัก`;
   fillSelects(); $('#pCur').value=S.nFac; $('#pAvg').value=(S.total/Math.max(1,S.nFac)).toFixed(1);
-  renderOverview(); renderFacilities(); renderTypes(); renderCapa(); renderPlan(); if(!$('#v-inventory').hidden) renderInventory();
+  renderOverview(); renderFacilities(); renderTypes(); renderCapa(); renderPlan(); if(!$('#v-inventory').hidden) renderInventory(); renderCert(); renderSurvey(); if(!$('#v-users').hidden) renderUsers();
 }
 function renderLive(){ renderCapa(); renderOverview(); if(!$('#v-facilities').hidden) renderFacilities(); }
 let rbT=null; const rebuildSoon=()=>{clearTimeout(rbT); rbT=setTimeout(rebuild,60);};
 
-rebuild(); renderTargets(); dataQuality(); setNotes();
-$('#footStamp').textContent='สร้างเมื่อ 25 ก.ย. 2569';
-try{const t=localStorage.getItem('calib.tab'); const h=(location.hash||'').slice(1); const k=['overview','facilities','inventory','types','capa','plan','data'].includes(h)?h:t; if(k) showTab(k);}catch(e){}
+rebuild(); renderTargets(); dataQuality(); setNotes(); authInit();
+$('#footStamp').textContent='ปรับปรุงระบบ 6 ต.ค. 2569';
 
 (async()=>{
   const c=window.claude;
-  if(!c||!c.use){ store.mode='local'; localLoad(); setNotes(); rebuild(); return; }
+  const goLocal=()=>{ store.mode='local'; localLoad(); acctReady=true; setNotes(); rebuild(); authInit(); };
+  if(!c||!c.use){ goLocal(); return; }
   c.use('downloads').then(d=>{downloads=d; if(!d) $('#dlNote').textContent='มุมมองนี้บันทึกไฟล์ไม่ได้ ให้เปิดหน้านี้ใน Claude หรือใช้ไฟล์ index.html';});
-  try{ userApi=await c.use('user'); if(userApi){ myId=(await userApi.id())||''; const cw=await userApi.can('data.write'); if(cw===false) canWrite=false; } }catch(e){}
+  c.use('assets').then(a=>{ assetsApi=a; renderCert(); }).catch(()=>{});
+  try{ userApi=await c.use('user'); if(userApi){ const cw=await userApi.can('data.write'); if(cw===false) canWrite=false; } }catch(e){}
   db=await c.use('db');
-  if(!db){ store.mode='local'; localLoad(); setNotes(); rebuild(); return; }
-  store.mode='db'; setNotes(); rebuild();
-  const resolveNames=async ids=>{ if(!userApi||!ids.size) return; try{ const ps=await userApi.profiles([...ids]); for(const id of ids) names[id]=(ps[id]&&ps[id].name)||''; }catch(e){} };
-  db.collection('capa').onSnapshot(async snap=>{ store.capa.clear(); const ids=new Set(); snap.docs.forEach(d=>{const v=d.data(); if(v){store.capa.set(d.id,v); if(v.by) ids.add(v.by);}}); await resolveNames(ids); renderLive(); },()=>{ setNotes(); $('#syncNote').textContent='การเชื่อมต่อหลุด โหลดหน้าใหม่เพื่อเชื่อมต่ออีกครั้ง'; });
-  db.collection('inv').onSnapshot(snap=>{ store.inv.clear(); snap.docs.forEach(d=>{const v=d.data(); if(v) store.inv.set(d.id,v);}); rebuildSoon(); },()=>{});
+  if(!db){ goLocal(); return; }
+  store.mode='db'; setNotes();
+  const sub=(coll,after)=>db.collection(coll).onSnapshot(snap=>{ store[coll].clear(); snap.docs.forEach(d=>{const v=d.data(); if(v) store[coll].set(d.id,v);}); after(); },()=>{ $('#syncNote').textContent='การเชื่อมต่อหลุด โหลดหน้าใหม่เพื่อเชื่อมต่ออีกครั้ง'; });
+  sub('acct',()=>{ const first=!acctReady; acctReady=true; if(pendingUser) return; if(first||!sess) authInit(); else if(!users()[sess.user]) logout('บัญชีนี้ถูกยกเลิก กรุณาติดต่อกองสาธารณสุข'); else if(!$('#v-users').hidden) renderUsers(); });
+  sub('capa',renderLive); sub('inv',rebuildSoon); sub('cert',()=>renderCert()); sub('survey',()=>renderSurvey());
+  sub('cfg',()=>{ renderSurvey(); if(!$('#v-users').hidden) renderUsers(); }); sub('log',()=>{ if(!$('#v-users').hidden) renderLog(); });
 })();
 })();
 </script>
