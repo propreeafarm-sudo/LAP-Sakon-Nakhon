@@ -275,6 +275,64 @@ dialog::backdrop{background:rgba(8,14,32,.5)}
 .notice{font-size:13.5px;line-height:1.7;color:var(--ink-2)}
 .notice h3{font-size:15px;margin:12px 0 2px;color:var(--ink)}
 .notice ul{margin:2px 0;padding-left:20px}
+
+/* ---- v5 theme: brighter, more vivid ---- */
+:root{
+  --bg:#f3f6fc; --surface-2:#f1f5fd; --line:#e2e8f5; --line-strong:#c7d2e8;
+  --accent:#2563eb; --accent-soft:#e3edff; --grad:linear-gradient(135deg,#2563eb 0%,#06b6d4 100%);
+  --c1:#2f7df6; --c2:#f97316; --c3:#10b981; --c4:#f5a60a; --c5:#ec4899; --c6:#16a34a; --c7:#7c3aed; --c8:#ef4444;
+  --good:#16a34a; --crit:#e11d48; --serious:#f97316; --warn:#f5a60a;
+  --shadow:0 1px 2px rgba(30,58,138,.05),0 10px 30px rgba(30,58,138,.08);
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){ --bg:#0a0f1e; --surface:#121a2e; --surface-2:#19233b; --line:#243150; --line-strong:#35456b; --accent:#7aa5ff; --accent-soft:#1c2c55; --grad:linear-gradient(135deg,#3b82f6 0%,#22d3ee 100%); --shadow:0 1px 2px rgba(0,0,0,.4); } }
+:root[data-theme="dark"]{ --bg:#0a0f1e; --surface:#121a2e; --surface-2:#19233b; --line:#243150; --line-strong:#35456b; --accent:#7aa5ff; --accent-soft:#1c2c55; --grad:linear-gradient(135deg,#3b82f6 0%,#22d3ee 100%); --shadow:0 1px 2px rgba(0,0,0,.4); }
+body{background:radial-gradient(1100px 520px at 8% -8%,color-mix(in srgb,#3b82f6 16%,transparent) 0,transparent 62%),radial-gradient(900px 520px at 100% 0%,color-mix(in srgb,#10b981 15%,transparent) 0,transparent 58%),radial-gradient(900px 600px at 50% 120%,color-mix(in srgb,#8b5cf6 10%,transparent) 0,transparent 60%),var(--bg);background-attachment:fixed}
+.band{background:linear-gradient(118deg,#1e3a8a 0%,#2563eb 34%,#0891b2 68%,#10b981 100%)}
+.band::before{right:-80px;top:-200px;width:560px;height:560px;background:radial-gradient(circle,rgba(255,255,255,.22),rgba(255,255,255,0) 62%)}
+.band::after{height:5px;background:linear-gradient(90deg,#fbbf24,#fde68a 35%,#f59e0b 70%,#fbbf24)}
+.mast{padding-block:28px 30px}
+.mast img{width:78px;height:78px;box-shadow:0 0 0 3px #fbbf24,0 8px 24px rgba(0,0,0,.25)}
+.mast .eb{color:#fde68a;font-weight:600}
+.mast h1{letter-spacing:-.01em;text-shadow:0 2px 12px rgba(0,0,0,.18)}
+.mast .sub{color:#e0f2fe}
+.userchip{background:rgba(255,255,255,.16);border-color:rgba(255,255,255,.3);backdrop-filter:blur(6px);border-radius:14px}
+nav.tabs{background:color-mix(in srgb,var(--surface) 88%,transparent);backdrop-filter:blur(10px);box-shadow:0 6px 24px rgba(30,58,138,.08)}
+nav.tabs button{font-weight:600;padding:9px 16px}
+nav.tabs button[aria-selected="true"]{background:var(--grad);color:#fff;box-shadow:0 6px 16px rgba(37,99,235,.35)}
+nav.tabs .badge{background:#e11d48}
+.panel{border-radius:18px;border-color:color-mix(in srgb,var(--line) 70%,transparent)}
+.panel h2{font-size:19px;font-weight:700}
+.ico{border-radius:10px;width:34px;height:34px}
+.kpi{border-radius:16px;padding:16px 18px;color:#fff;box-shadow:0 10px 22px var(--kshadow,rgba(37,99,235,.25));position:relative;overflow:hidden}
+.kpi::after{content:"";position:absolute;right:-28px;top:-28px;width:110px;height:110px;border-radius:50%;background:rgba(255,255,255,.14)}
+.kpi .l,.kpi .v,.kpi .s{color:#fff;position:relative;z-index:1}
+.kpi .l{font-weight:600;opacity:.96}.kpi .l svg{color:#fff}.kpi .s{opacity:.92}
+.kpi .v{font-size:29px}
+.k-blue{background:linear-gradient(135deg,#1d4ed8,#3b82f6);--kshadow:rgba(37,99,235,.3)}
+.k-teal{background:linear-gradient(135deg,#0f766e,#0ea5a4);--kshadow:rgba(13,148,136,.3)}
+.k-red{background:linear-gradient(135deg,#be123c,#f43f5e);--kshadow:rgba(225,29,72,.3)}
+.k-green{background:linear-gradient(135deg,#15803d,#22a34f);--kshadow:rgba(22,163,74,.3)}
+.k-violet{background:linear-gradient(135deg,#6d28d9,#8b5cf6);--kshadow:rgba(124,58,237,.3)}
+.k-orange{background:linear-gradient(135deg,#c2410c,#f97316);--kshadow:rgba(234,88,12,.3)}
+.verdict .big{background:linear-gradient(90deg,#2563eb,#10b981);-webkit-background-clip:text;background-clip:text;color:transparent}
+.btn{border-radius:10px;font-weight:600}
+.btn.primary{background:var(--grad);border-color:transparent;color:#fff;box-shadow:0 6px 14px rgba(37,99,235,.28)}
+.btn.primary:hover{color:#fff;filter:brightness(1.07)}
+.btn.gold{background:linear-gradient(135deg,#f59e0b,#fbbf24);border-color:transparent;color:#3b2500;box-shadow:0 6px 14px rgba(245,158,11,.3)}
+.seg button[aria-pressed="true"]{background:var(--grad);color:#fff}
+thead th{background:var(--accent-soft);color:var(--ink)}
+tbody tr:hover td{background:color-mix(in srgb,var(--accent-soft) 55%,transparent)}
+.ins{border-radius:14px;border-top-width:5px;background:linear-gradient(180deg,color-mix(in srgb,var(--ic) 9%,var(--surface)) 0,var(--surface) 70%)}
+.stage{border-radius:14px;border-left-width:6px}
+.hbar .track{height:16px;border-radius:0 8px 8px 0}.hbar .fill{border-radius:0 8px 8px 0}
+.drop{border-radius:16px;border-color:color-mix(in srgb,var(--accent) 45%,var(--line-strong));background:linear-gradient(135deg,color-mix(in srgb,#3b82f6 8%,var(--surface)),color-mix(in srgb,#10b981 8%,var(--surface)))}
+.authcard{border-radius:20px;position:relative;overflow:hidden;padding-top:32px}
+.authcard::before{content:"";position:absolute;left:0;right:0;top:0;height:7px;background:linear-gradient(90deg,#2563eb,#06b6d4,#10b981,#fbbf24)}
+.certpill{background:color-mix(in srgb,#10b981 16%,var(--surface));color:var(--i-teal)}
+.cycle li{border-radius:14px;background:linear-gradient(180deg,color-mix(in srgb,var(--cc) 10%,var(--surface)),var(--surface))}
+.facfind{border:1px solid var(--line-strong);background:var(--surface);border-radius:10px;padding:9px 12px;font-size:14.5px;min-width:0;width:100%}
+.exp{border-radius:14px}
+dialog{border-radius:20px}
 </style>
 </head>
 <body>
@@ -287,7 +345,7 @@ dialog::backdrop{background:rgba(8,14,32,.5)}
       <h1>ระบบกำกับติดตามการสอบเทียบเครื่องมือแพทย์</h1>
       <div class="sub">บำรุงรักษาเชิงป้องกัน (PM) และสอบเทียบ (Calibration) ตามมาตรฐานบริการสุขภาพปฐมภูมิ</div>
     </div>
-    <div class="roundchip"><span>รอบข้อมูลที่แสดง</span><b id="roundLabel">มี.ค.–เม.ย. 2568</b><span id="roundSrc">รายงานผู้รับจ้าง + ทะเบียนที่ปรับปรุง</span></div>
+    <div class="roundchip" hidden><span>รอบข้อมูลที่แสดง</span><b id="roundLabel">มี.ค.–เม.ย. 2568</b><span id="roundSrc">รายงานผู้รับจ้าง + ทะเบียนที่ปรับปรุง</span></div>
     <div class="userchip" id="userChip" hidden><div class="who2"><b id="ucName"></b><span id="ucRole"></span></div><button id="ucPw">เปลี่ยนรหัสผ่าน</button><button id="ucOut">ออกจากระบบ</button></div>
   </header>
 </div></div>
@@ -360,7 +418,7 @@ dialog::backdrop{background:rgba(8,14,32,.5)}
     </div>
 
     <div class="panel">
-      <div class="phead"><div><h2><span class="ico" style="background:var(--t-blue);color:var(--i-blue)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg></span>ตัวชี้วัดเทียบเป้าหมาย</h2><div class="hint">ค่าเป้าหมายที่เสนอสำหรับงานปฐมภูมิ ปรับได้ในแท็บ “แผนปีงบ 2570”</div></div></div>
+      <div class="phead"><div><h2><span class="ico" style="background:var(--t-blue);color:var(--i-blue)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg></span>ตัวชี้วัดเทียบเป้าหมาย</h2><div class="hint">ค่าเป้าหมายที่เสนอสำหรับงานปฐมภูมิ ปรับได้ในแท็บ “สำรวจประจำปี / แผน”</div></div></div>
       <div class="tbl-wrap"><table id="kpiTable"><thead><tr><th>ตัวชี้วัด</th><th class="r">เป้าหมาย</th><th class="r">ผลงาน</th><th>สถานะ</th><th>ที่มา</th></tr></thead><tbody></tbody></table></div>
     </div>
 
@@ -413,7 +471,7 @@ dialog::backdrop{background:rgba(8,14,32,.5)}
   <section class="view" id="v-inventory" hidden>
     <div class="panel">
       <div class="invhead">
-        <div class="fld"><label for="invFac">เลือก รพ.สต.</label><select id="invFac"></select></div>
+        <div class="fld"><label for="invFac">เลือก รพ.สต.</label><input class="facfind" data-for="invFac" list="facDL" placeholder="พิมพ์ค้นหา รพ.สต. หรือรหัส 5 หลัก" aria-label="ค้นหา รพ.สต." data-roles="admin" style="margin-bottom:8px"><select id="invFac"></select></div>
         <div class="actions">
           <button class="btn primary" id="invAdd"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 5v14M5 12h14"/></svg>เพิ่มเครื่องมือ</button>
           <button class="btn" id="invSurvey"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg>แบบสำรวจของแห่งนี้</button>
@@ -466,7 +524,7 @@ dialog::backdrop{background:rgba(8,14,32,.5)}
     <div class="panel">
       <div class="phead"><div><h2 id="certTitle">ใบ cer รายเครื่อง</h2><div class="hint">“เลขใบรับรองในระบบ” มาจากรายงานผู้รับจ้างรอบ 2568</div></div><span class="count" id="certCount"></span></div>
       <div class="filters">
-        <select id="certFac" aria-label="รพ.สต."></select>
+        <input class="facfind" data-for="certFac" list="facDL" placeholder="พิมพ์ค้นหา รพ.สต. หรือรหัส 5 หลัก" aria-label="ค้นหา รพ.สต." data-roles="admin" style="flex:1 1 240px"><select id="certFac" aria-label="รพ.สต."></select>
         <input type="search" id="certSearch" placeholder="ค้นหารหัสเครื่อง / ประเภท / เลขใบรับรอง" aria-label="ค้นหาใบ cer">
         <select id="certHas" aria-label="สถานะไฟล์"><option value="">ทุกสถานะ</option><option value="1">มีไฟล์แล้ว</option><option value="0">ยังไม่มีไฟล์</option></select>
       </div>
@@ -565,11 +623,11 @@ dialog::backdrop{background:rgba(8,14,32,.5)}
   <!-- PLAN -->
   <section class="view" id="v-plan" hidden>
     <div class="panel">
-      <div class="phead"><div><h2><span class="ico" style="background:var(--t-violet);color:var(--i-violet)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 9l2 2 4-4M8 16h8"/></svg></span>แบบสำรวจเครื่องมือส่งสอบเทียบ ประจำปีงบประมาณ</h2><div class="hint">รพ.สต. ยืนยันทุกปีว่าจะส่งเครื่องใดเข้าสอบเทียบ กองสาธารณสุขใช้ยอดรวมกำหนดขอบเขตจัดจ้าง</div></div>
+      <div class="phead"><div><h2><span class="ico" style="background:var(--t-violet);color:var(--i-violet)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 9l2 2 4-4M8 16h8"/></svg></span>แบบสำรวจเครื่องมือส่งสอบเทียบ ประจำปีงบประมาณ</h2><div class="hint">ระบบเปิดรอบสำรวจของปีงบถัดไปให้อัตโนมัติทุกวันที่ 1 ต.ค. · รพ.สต. ยืนยันว่าจะส่งเครื่องใด กองสาธารณสุขใช้ยอดรวมกำหนดขอบเขตจัดจ้าง</div></div>
         <div class="svbar"><label for="svYear" class="hint">ปีงบประมาณ</label><select id="svYear"></select><span id="svState"></span></div></div>
       <div class="svbar" data-roles="admin" style="margin-bottom:6px">
         <input id="svNewYear" type="number" min="2570" max="2600" placeholder="ปีงบ เช่น 2571" style="width:150px" aria-label="ปีงบประมาณใหม่">
-        <button class="btn" id="svOpenNew">เปิดรอบสำรวจปีใหม่</button>
+        <button class="btn" id="svOpenNew">เปิดรอบล่วงหน้า</button>
         <input id="svDeadline" placeholder="กำหนดส่ง เช่น 30 พ.ย. 2569" style="width:210px" aria-label="กำหนดส่ง">
         <button class="btn" id="svSaveDl">บันทึกกำหนดส่ง</button>
         <button class="btn" id="svToggle">ปิดรับแบบสำรวจ</button>
@@ -593,17 +651,21 @@ dialog::backdrop{background:rgba(8,14,32,.5)}
     <div class="panel">
       <div class="phead"><div><h2 id="svFormTitle">แบบสำรวจของ รพ.สต.</h2><div class="hint">ติ๊กเครื่องที่จะส่งสอบเทียบ เครื่องที่ไม่ส่งให้ระบุเหตุผล · เครื่องใหม่ให้เพิ่มที่แท็บ “ทะเบียนเครื่องมือ” ก่อน แล้วจะขึ้นในรายการนี้</div></div><span id="svFormState"></span></div>
       <div class="filters">
-        <select id="svFac" aria-label="รพ.สต." data-roles="admin"></select>
-        <button class="btn sm" id="svAll">เลือกทั้งหมด</button><button class="btn sm" id="svNone">ไม่เลือกทั้งหมด</button>
+        <input class="facfind" data-for="svFac" list="facDL" placeholder="พิมพ์ค้นหา รพ.สต. หรือรหัส 5 หลัก" aria-label="ค้นหา รพ.สต." data-roles="admin" style="flex:1 1 240px"><select id="svFac" aria-label="รพ.สต." data-roles="admin"></select>
+        <button class="btn sm" id="svAll">เลือกทั้งหมด</button><button class="btn sm" id="svNone">ไม่เลือกทั้งหมด</button><button class="btn sm" id="svCopy">ใช้คำตอบเดียวกับปีก่อน</button>
         <span class="count" id="svCount"></span>
       </div>
-      <div class="tbl-wrap"><table id="svTable"><thead><tr><th>ส่ง</th><th>รหัสเครื่อง</th><th>ประเภท</th><th>ยี่ห้อ / รุ่น</th><th>ผลล่าสุด</th><th>เหตุผลที่ไม่ส่ง</th></tr></thead><tbody></tbody></table></div>
+      <div class="tbl-wrap"><table id="svTable"><thead><tr><th>ส่ง</th><th>รหัสเครื่อง</th><th>ประเภท</th><th>ยี่ห้อ / รุ่น</th><th>ผลล่าสุด</th><th id="svPrevTh">ปีก่อน</th><th>เหตุผลที่ไม่ส่ง</th></tr></thead><tbody></tbody></table></div>
       <div class="form" style="margin-top:16px">
         <div class="fld"><label for="svRep">ผู้รายงาน (ชื่อ–ตำแหน่ง) · กรอกตามสมัครใจ</label><input id="svRep"></div>
         <div class="fld"><label for="svPhone">เบอร์ติดต่อ · กรอกตามสมัครใจ</label><input id="svPhone" inputmode="tel"></div>
         <div class="fld full"><label for="svNote">หมายเหตุถึงกองสาธารณสุข</label><textarea id="svNote" rows="2"></textarea></div>
       </div>
       <div class="formfoot"><span class="hint">ชื่อและเบอร์ติดต่อใช้เพื่อประสานงานการสอบเทียบเท่านั้น</span><div class="actions"><button class="btn" id="svDraft">บันทึกร่าง</button><button class="btn primary" id="svSubmit">ส่งแบบสำรวจ</button></div></div>
+    </div>
+    <div class="panel">
+      <div class="phead"><div><h2>ประวัติการสำรวจรายปี</h2><div class="hint">เก็บทุกปีงบประมาณต่อเนื่อง คลิกแถวเพื่อเปิดดูหรือแก้ไขปีนั้น</div></div></div>
+      <div class="tbl-wrap"><table id="svHistTable"><thead><tr id="svHistHead"></tr></thead><tbody></tbody></table></div>
     </div>
     <div class="panel" data-roles="admin">
       <div class="phead"><div><h2>รองรับการถ่ายโอนเพิ่ม 19 แห่ง</h2><div class="hint">ประมาณการจากค่าเฉลี่ยเครื่องมือต่อ รพ.สต. · แก้ตัวเลขได้</div></div></div>
@@ -757,7 +819,8 @@ dialog::backdrop{background:rgba(8,14,32,.5)}
     </div>
   </form>
 </dialog>
-<input type="file" id="certOne" accept="application/pdf,.pdf" hidden>
+<input type="file" id="certOne" accept="application/pdf,.pdf" multiple hidden>
+<datalist id="facDL"></datalist>
 
 <datalist id="typeList"></datalist>
 <datalist id="budgetList"><option value="งบประมาณ อบจ."><option value="เงินบำรุง รพ.สต."><option value="งบ สปสช. (กองทุนตำบล)"><option value="เงินบริจาค"><option value="โอนจากกระทรวงสาธารณสุข"></datalist>
@@ -823,7 +886,7 @@ function putDoc(coll,key,val){
   return Promise.resolve();
 }
 function setNotes(){
-  const [k,m]= store.mode==='fb' ? ['ok','เชื่อมต่อฐานข้อมูลกลาง (Firebase) แล้ว · ข้อมูลตรงกันทุกเครื่อง'] : store.mode==='db' ? (canWrite?['ok','เชื่อมต่อฐานข้อมูลกลางแล้ว · ทุกคนที่เปิดหน้านี้เห็นข้อมูลเดียวกันทันที']:['off','ดูได้อย่างเดียว · บัญชี Claude นี้ไม่มีสิทธิ์เขียนข้อมูล'])
+  const [k,m]= store.mode==='fb' ? (fbConnected===false?['off','Firebase ขาดการเชื่อมต่อ · กำลังพยายามเชื่อมต่อใหม่']:fbConnected===null?['','กำลังเชื่อมต่อ Firebase…']:['ok','เชื่อมต่อฐานข้อมูลกลาง (Firebase) แล้ว · ข้อมูลตรงกันทุกเครื่อง']) : store.mode==='db' ? (canWrite?['ok','เชื่อมต่อฐานข้อมูลกลางแล้ว · ทุกคนที่เปิดหน้านี้เห็นข้อมูลเดียวกันทันที']:['off','ดูได้อย่างเดียว · บัญชี Claude นี้ไม่มีสิทธิ์เขียนข้อมูล'])
     : store.mode==='local' ? ['off','ข้อมูลบันทึกในเบราว์เซอร์เครื่องนี้เท่านั้น · เครื่องอื่นจะไม่เห็น จนกว่าจะติดตั้งบนเซิร์ฟเวอร์กลาง'] : ['','กำลังเตรียมที่เก็บข้อมูล…'];
   ['#syncNote','#storeNote'].forEach(s=>{const el=$(s); el.className='syncnote '+k; el.textContent=m;});
 }
@@ -1364,7 +1427,9 @@ $('#logExport').onclick=async()=>{ const wb=new ExcelJS.Workbook(); simpleSheet(
 /* ---------- accounts & login ---------- */
 const acctDoc=()=>store.acct.get('all')||{users:{}};
 const users=()=>store.mode==='fb'?fbUsersMap():(acctDoc().users||{});
-const cfg=()=>{ const c=store.cfg.get('main')||{}; return {forceChange:true,...c,surveys:(c.surveys&&Object.keys(c.surveys).length)?c.surveys:{'2570':{open:true,deadline:''}}}; };
+const cfg=()=>{ const c=store.cfg.get('main')||{}; return {forceChange:true,...c,surveys:{...autoYears(),...(c.surveys||{})}}; };
+const fyNow=()=>{ const d=new Date(); return d.getFullYear()+543+(d.getMonth()>=9?1:0); };
+function autoYears(){ const o={}; for(let y=2570;y<=Math.max(2570,fyNow()+1);y++) o[y]={open:true,deadline:''}; return o; }
 function saveCfg(patch){ return putDoc('cfg','main',stamp({...cfg(),...patch})); }
 async function hashPw(pw,salt){
   if(window.crypto&&crypto.subtle){ const enc=new TextEncoder(); const k=await crypto.subtle.importKey('raw',enc.encode(pw),'PBKDF2',false,['deriveBits']); const bits=await crypto.subtle.deriveBits({name:'PBKDF2',hash:'SHA-256',salt:enc.encode(salt),iterations:60000},k,256); return 'p1$'+[...new Uint8Array(bits)].map(b=>b.toString(16).padStart(2,'0')).join(''); }
@@ -1434,7 +1499,7 @@ function enterApp(){
   const role=sess.role; $$('[data-roles]').forEach(el=>el.hidden=!el.dataset.roles.split(',').includes(role));
   let nameTxt='กองสาธารณสุข อบจ.สกลนคร';
   if(role==='fac'){ invFacKey=sess.facKey; ROUND=null; const f=BASE_FACS.find(x=>x.key===sess.facKey)||{name:store.inv.get(sess.facKey)?.name||'รพ.สต.'}; nameTxt=f.name+(f.amphoe?` · อ.${f.amphoe}`:''); }
-  $('.roundchip').hidden=role==='fac'; $('#ucName').textContent=nameTxt; $('#ucRole').textContent=(role==='admin'?'ผู้ดูแลระบบ':'ผู้ใช้ระดับ รพ.สต.')+' · '+sess.user; $('#userChip').hidden=false;
+  $('#ucName').textContent=nameTxt; $('#ucRole').textContent=(role==='admin'?'ผู้ดูแลระบบ':'ผู้ใช้ระดับ รพ.สต.')+' · '+sess.user; $('#userChip').hidden=false;
   $('nav.tabs [data-tab="overview"] .tl').textContent=role==='fac'?'ภาพรวม รพ.สต.':'ภาพรวมผู้บริหาร';
   armIdle(); rebuild();
   let k='overview'; try{ k=localStorage.getItem('calib.tab')||'overview'; }catch(e){}
@@ -1529,29 +1594,34 @@ function renderRemoved(){
 $('#rmTable tbody').addEventListener('click',e=>{ const b=e.target.closest('[data-restore]'); if(b) restoreItem(b.dataset.fk,b.dataset.restore); });
 
 /* ---------- certificate files ---------- */
-let assetsApi=null, idbP=null;
+let assetsApi=null, idbP=null, fbStBroken=false;
 function idb(){ if(!idbP) idbP=new Promise((res,rej)=>{ const r=indexedDB.open('calibFiles',1); r.onupgradeneeded=()=>r.result.createObjectStore('f'); r.onsuccess=()=>res(r.result); r.onerror=()=>rej(r.error); }); return idbP; }
 const idbReq=(mode,fn)=>idb().then(d=>new Promise((res,rej)=>{ const tx=d.transaction('f',mode); const rq=fn(tx.objectStore('f')); tx.oncomplete=()=>res(rq.result); tx.onerror=()=>rej(tx.error); }));
 const fileMode=()=>assetsApi?'asset':(store.mode==='fb'&&fb&&fb.st?'fbst':(store.mode==='local'&&window.indexedDB?'idb':'none'));
-async function filePut(key,file,fk){ const m=fileMode(); if(m==='fbst'){ const r=fb.st.ref(`certs/${fbKey(fk)}/${fbKey(key)}.pdf`); await r.put(file,{contentType:'application/pdf'}); return {store:'fbst',ref:r.fullPath}; } if(m==='asset'){ const r=await assetsApi.upload(file,{type:'application/pdf'}); return {store:'asset',ref:r.id}; } if(m==='idb'){ await idbReq('readwrite',s=>s.put(file,key)); return {store:'idb',ref:key}; } return {store:'none',ref:''}; }
-async function fileBlob(m){ if(m.store==='asset'){ const r=await fetch('/_blob/'+m.ref); if(!r.ok) throw new Error('เปิดไฟล์ไม่ได้'); return await r.blob(); } if(m.store==='idb'){ const b=await idbReq('readonly',s=>s.get(m.ref)); if(!b) throw new Error('ไม่พบไฟล์ในเครื่องนี้'); return b; } throw new Error('รายการนี้บันทึกเฉพาะเลขใบรับรอง ไม่มีไฟล์แนบ'); }
-async function fileDel(m){ try{ if(m.store==='fbst'&&fb&&fb.st){ await fb.st.ref(m.ref).delete(); return; } if(m.store==='asset'&&assetsApi) await assetsApi.delete(m.ref); else if(m.store==='idb') await idbReq('readwrite',s=>s.delete(m.ref)); }catch(e){} }
+async function filePut(key,file,fk){ const m=fileMode(); if(m==='fbst'||store.mode==='fb'){ if(fb.st&&!fbStBroken){ try{ const r=fb.st.ref(`certs/${fbKey(fk)}/${fbKey(key)}.pdf`); await Promise.race([r.put(file,{contentType:'application/pdf'}),new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),45000))]); return {store:'fbst',ref:r.fullPath}; }catch(e){ fbStBroken=true; } }
+    if(file.size>6*1024*1024) throw new Error('ไฟล์ใหญ่เกิน 6 MB และยังไม่ได้เปิด Firebase Storage');
+    const b64=await new Promise((res,rej)=>{ const fr=new FileReader(); fr.onload=()=>res(String(fr.result).split(',')[1]); fr.onerror=()=>rej(fr.error); fr.readAsDataURL(file); });
+    const path=`calib/files/${fbKey(fk)}/${fbKey(key)}`; try{ await fb.db.ref(path).set({b64,name:file.name.slice(0,120)}); }catch(e){ throw new Error(fbErrMsg(e)); } return {store:'fbdb',ref:path}; } if(m==='asset'){ const r=await assetsApi.upload(file,{type:'application/pdf'}); return {store:'asset',ref:r.id}; } if(m==='idb'){ await idbReq('readwrite',s=>s.put(file,key)); return {store:'idb',ref:key}; } return {store:'none',ref:''}; }
+async function fileBlob(m){ if(m.store==='fbdb'){ const v=(await fb.db.ref(m.ref).once('value')).val(); if(!v||!v.b64) throw new Error('ไม่พบไฟล์ในฐานข้อมูล'); const bin=atob(v.b64); const u=new Uint8Array(bin.length); for(let i=0;i<bin.length;i++) u[i]=bin.charCodeAt(i); return new Blob([u],{type:'application/pdf'}); } if(m.store==='asset'){ const r=await fetch('/_blob/'+m.ref); if(!r.ok) throw new Error('เปิดไฟล์ไม่ได้'); return await r.blob(); } if(m.store==='idb'){ const b=await idbReq('readonly',s=>s.get(m.ref)); if(!b) throw new Error('ไม่พบไฟล์ในเครื่องนี้'); return b; } throw new Error('รายการนี้บันทึกเฉพาะเลขใบรับรอง ไม่มีไฟล์แนบ'); }
+async function fileDel(m){ try{ if(m.store==='fbdb'&&fb){ await fb.db.ref(m.ref).remove(); return; } if(m.store==='fbst'&&fb&&fb.st){ await fb.st.ref(m.ref).delete(); return; } if(m.store==='asset'&&assetsApi) await assetsApi.delete(m.ref); else if(m.store==='idb') await idbReq('readwrite',s=>s.delete(m.ref)); }catch(e){} }
 const certsOf=it=>store.cert.get(it.f.key)?.items?.[docId(it.id)]||{};
 const hasFile=it=>Object.values(certsOf(it)).some(c=>c&&c.store&&c.store!=='none');
 const hasCertAny=it=>Object.keys(certsOf(it)).length>0;
 const idParts=id=>{ const m=/^([A-Za-z]+)-?PCU-?(\d+)\/(\d+)-(\d+)$/.exec(String(id).trim()); return m?[m[1].toUpperCase(),+m[2],+m[3],+m[4]].join('|'):null; };
-function parseCertName(name){ const base=name.replace(/\.pdf$/i,''); const m=/([A-Za-z]{2,6})-?PCU-?(\d+)-(\d+)-(\d{2})(\d{2})(PAO_[A-Za-z0-9]+)/.exec(base); if(!m) return null; return {key:[m[1].toUpperCase(),+m[2],+m[3],+m[4]].join('|'),certNo:m[5]+m[6],year:2000+ +m[5]+543}; }
+function parseCertName(name){ const base=name.replace(/\.pdf$/i,''); const m=/([A-Za-z]{2,6})-?PCU-?(\d+)[-_\/](\d+)-(\d{1,3})\.?[\s_]*[\(\[]?\s*(\d{2})(PAO_[A-Za-z0-9]+)/.exec(base); if(!m) return null; return {key:[m[1].toUpperCase(),+m[2],+m[3],+m[4]].join('|'),certNo:m[5]+m[6],year:2000+ +m[5]+543}; }
+const certKind=no=>/PM\d/i.test(no||'')?'PM':'สอบเทียบ';
 async function attachCerts(list){ // [{it,file,certNo,year}]
-  const byFac=new Map(); const log=$('#certLog');
+  const byFac=new Map(); const log=$('#certLog'); let nOk=0,nBad=0,lastErr='';
   for(const x of list){ const k=docId(x.it.id)+'_'+x.year+'_'+docId(x.certNo).slice(0,60);
-    try{ const ref=await filePut(k,x.file,x.it.f.key); const meta={certNo:x.certNo,year:x.year,name:x.file.name.slice(0,120),size:x.file.size,...ref,at:new Date().toISOString(),by:sess.user};
+    try{ const ref=await filePut(k,x.file,x.it.f.key); const meta={certNo:x.certNo,year:x.year,kind:certKind(x.certNo),name:x.file.name.slice(0,120),size:x.file.size,...ref,at:new Date().toISOString(),by:sess.user};
       if(!byFac.has(x.it.f.key)) byFac.set(x.it.f.key,clone(store.cert.get(x.it.f.key)||{items:{}}));
       const d=byFac.get(x.it.f.key); d.items=d.items||{}; const ik=docId(x.it.id); d.items[ik]={...(d.items[ik]||{}),[x.year+'_'+docId(x.certNo).slice(0,60)]:meta};
-      log.insertAdjacentHTML('afterbegin',`<div class="ok">✓ ${esc(x.file.name)} → ${esc(x.it.f.name)} · ${esc(x.it.id)} · ${esc(x.certNo)}${ref.store==='none'?' (บันทึกเลขใบรับรอง ไม่ได้เก็บไฟล์)':''}</div>`);
-    }catch(err){ log.insertAdjacentHTML('afterbegin',`<div class="bad">✗ ${esc(x.file.name)}: ${esc(err&&(err.message||err.code)||'อัปโหลดไม่สำเร็จ')}</div>`); } }
+      nOk++; log.insertAdjacentHTML('afterbegin',`<div class="ok">✓ ${esc(x.file.name)} → ${esc(x.it.f.name)} · ${esc(x.it.id)} · ${esc(x.certNo)}${ref.store==='none'?' (บันทึกเลขใบรับรอง ไม่ได้เก็บไฟล์)':''}</div>`);
+    }catch(err){ nBad++; lastErr=String(err&&(err.message||err.code)||'อัปโหลดไม่สำเร็จ'); log.insertAdjacentHTML('afterbegin',`<div class="bad">✗ ${esc(x.file.name)}: ${esc(lastErr)}</div>`); } }
   const ps=[]; for(const [fk,d] of byFac) ps.push(putDoc('cert',fk,stamp(d)));
   if(byFac.size) logAct('อัปโหลดใบ cer',`${list.length} ไฟล์`);
   renderCert(); await Promise.allSettled(ps);
+  toast(nBad?`แนบสำเร็จ ${nOk} ไฟล์ · ไม่สำเร็จ ${nBad} ไฟล์: ${lastErr}`:`แนบใบ cer แล้ว ${nOk} ไฟล์`);
 }
 async function certUpload(files){
   if(!editable()) return toast('ไม่สามารถอัปโหลดในมุมมองนี้');
@@ -1562,14 +1632,15 @@ async function certUpload(files){
     const p=parseCertName(f.name); const it=p&&idx.get(p.key);
     if(!it){ log.insertAdjacentHTML('afterbegin',`<div class="bad">✗ ${esc(f.name)}: ${p?(sess.role==='fac'?'ไม่ใช่เครื่องของ รพ.สต. นี้ หรือไม่พบรหัสเครื่องในทะเบียน':'ไม่พบรหัสเครื่องนี้ในทะเบียน'):'ชื่อไฟล์ไม่ตรงรูปแบบ ให้กด “แนบไฟล์” ที่แถวของเครื่อง'}</div>`); continue; }
     list.push({it,file:f,certNo:p.certNo,year:p.year}); }
-  if(list.length) await attachCerts(list);
+  if(list.length) await attachCerts(list); else toast('ไม่มีไฟล์ที่จับคู่กับเครื่องได้ ดูรายละเอียดใต้ช่องอัปโหลด หรือกด “แนบไฟล์” ที่แถวของเครื่อง');
 }
 (function(){ const d=$('#certDrop'); $('#certFiles').onchange=e=>{ const fs=[...e.target.files]; e.target.value=''; if(fs.length) certUpload(fs); };
   ['dragenter','dragover'].forEach(ev=>d.addEventListener(ev,e=>{e.preventDefault(); d.classList.add('over');})); ['dragleave','drop'].forEach(ev=>d.addEventListener(ev,e=>{e.preventDefault(); d.classList.remove('over');}));
   d.addEventListener('drop',e=>{ const fs=[...e.dataTransfer.files]; if(fs.length) certUpload(fs); }); })();
 let certOneFor=null, certFacFilter='all';
-$('#certOne').onchange=async e=>{ const f=e.target.files[0]; e.target.value=''; if(!f||!certOneFor) return; const it=DS.items.find(x=>x.id===certOneFor); if(!it) return; const p=parseCertName(f.name); const yr=new Date().getFullYear()+543;
-  await attachCerts([{it,file:f,certNo:p?p.certNo:f.name.replace(/\.pdf$/i,'').slice(0,60),year:p?p.year:yr}]); };
+$('#certOne').onchange=async e=>{ const fs=[...e.target.files]; e.target.value=''; if(!fs.length||!certOneFor) return; const it=DS.items.find(x=>x.id===certOneFor); if(!it) return; const yr=new Date().getFullYear()+543; const list=[];
+  for(const f of fs){ if(!/\.pdf$/i.test(f.name)){ toast('รับเฉพาะไฟล์ PDF: '+f.name); continue; } const p=parseCertName(f.name); list.push({it,file:f,certNo:p?p.certNo:f.name.replace(/\.pdf$/i,'').slice(0,60),year:p?p.year:yr}); }
+  if(list.length) await attachCerts(list); };
 async function openCert(it,year){ const m=certsOf(it)[year]; if(!m) return; try{ if(m.store==='fbst'){ const url=await fb.st.ref(m.ref).getDownloadURL(); logAct('เปิดใบ cer',`${it.id} · ${m.certNo}`); const a=document.createElement('a'); a.href=url; a.target='_blank'; a.rel='noopener'; document.body.appendChild(a); a.click(); a.remove(); return; } const b=await fileBlob(m); const name=m.name||`${it.id.replace(/\//g,'-')}_${m.certNo}.pdf`; logAct('เปิดใบ cer',`${it.id} · ${m.certNo}`);
     if(downloads){ try{ await downloads.save({filename:name,data:b}); }catch(e){} return; }
     const url=URL.createObjectURL(new Blob([b],{type:'application/pdf'})); const a=document.createElement('a'); a.href=url; a.target='_blank'; a.rel='noopener'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),60000);
@@ -1581,7 +1652,7 @@ function renderCert(){
   $('#certKpis').innerHTML=[['k-blue','เครื่องมือในทะเบียน',fmt(items.length),'เครื่อง'],['k-violet','มีเลขใบรับรอง',fmt(nNo),`${pct(nNo,items.length,1)}% ของทั้งหมด`],['k-teal','มีไฟล์ใบ cer แนบ',fmt(nFile),`${pct(nFile,items.length,1)}% ของทั้งหมด`],['k-orange','ยังไม่มีไฟล์',fmt(items.length-nFile),'เครื่อง']].map(([c,l,v,x])=>`<div class="kpi ${c}"><div class="l">${l}</div><div class="v num">${v}</div><div class="s">${x}</div></div>`).join('');
   const fm=fileMode(); const sn=$('#certStoreNote');
   sn.className='syncnote '+(fm==='none'?'off':fm==='asset'?'ok':'off');
-  sn.className='syncnote '+(fm==='asset'||fm==='fbst'?'ok':'off'); sn.textContent=fm==='fbst'?'ไฟล์เก็บใน Firebase Storage ของระบบ ผู้ใช้ที่ล็อกอินเปิดดูได้จากทุกเครื่อง':fm==='asset'?'ไฟล์เก็บในพื้นที่กลางของระบบ ทุกคนที่มีสิทธิ์เปิดดูได้':fm==='idb'?'ไฟล์ PDF เก็บในเบราว์เซอร์เครื่องนี้เท่านั้น เครื่องอื่นจะเห็นเฉพาะเลขใบรับรอง':'บัญชีที่เปิดหน้านี้ไม่มีสิทธิ์เก็บไฟล์ในพื้นที่กลาง ระบบจะบันทึกเฉพาะเลขใบรับรองและชื่อไฟล์';
+  sn.className='syncnote '+(fm==='asset'||fm==='fbst'?'ok':'off'); sn.textContent=fm==='fbst'?(fbStBroken?'Firebase Storage ยังไม่พร้อมใช้ ระบบจึงเก็บไฟล์ไว้ในฐานข้อมูลกลางแทน (จำกัดไฟล์ละ 6 MB) เปิดดูได้จากทุกเครื่อง':'ไฟล์เก็บในพื้นที่กลางของระบบ (Firebase) ผู้ใช้ที่ล็อกอินเปิดดูได้จากทุกเครื่อง'):fm==='asset'?'ไฟล์เก็บในพื้นที่กลางของระบบ ทุกคนที่มีสิทธิ์เปิดดูได้':fm==='idb'?'ไฟล์ PDF เก็บในเบราว์เซอร์เครื่องนี้เท่านั้น เครื่องอื่นจะเห็นเฉพาะเลขใบรับรอง':'บัญชีที่เปิดหน้านี้ไม่มีสิทธิ์เก็บไฟล์ในพื้นที่กลาง ระบบจะบันทึกเฉพาะเลขใบรับรองและชื่อไฟล์';
   if(isAdmin()){ let rows=S.byFac.map(f=>({f,n:f.total,c:f.items.filter(hasFile).length})).filter(r=>certFacFilter==='all'||r.c<r.n).sort((a,b)=>(a.f.key.zone||99)-(b.f.key.zone||99)||a.f.key.name.localeCompare(b.f.key.name,'th'));
     $('#certFacTable tbody').innerHTML=rows.map(r=>{ const p=r.n?100*r.c/r.n:0; return `<tr class="click" data-fk="${r.f.key.key}"><td>${esc(r.f.key.name)}</td><td class="num">${r.f.key.zone||'ใหม่'}</td><td class="r num">${r.n}</td><td class="r num">${r.c}</td><td class="num"><span class="minibar"><i style="width:${p}%;background:${p>=100?'var(--good)':p>0?'var(--warn)':'var(--crit)'}"></i></span>${p.toFixed(0)}%</td></tr>`; }).join(''); }
   const sel=$('#certFac'); const fl=facList(); sel.innerHTML=fl.map(f=>`<option value="${f.key}">${esc(facLabel(f))}</option>`).join(''); if(!fl.find(f=>f.key===invFacKey)) invFacKey=fl[0]?.key; sel.value=invFacKey; sel.disabled=!isAdmin();
@@ -1589,8 +1660,8 @@ function renderCert(){
   const q=$('#certSearch').value.trim().toLowerCase(), has=$('#certHas').value; const can=editable();
   const rows=items.filter(it=>it.f===fac).filter(it=>(has===''||(has==='1')===hasFile(it))&&(!q||[it.id,it.t.name,it.cert,...Object.values(certsOf(it)).map(c=>c.certNo)].join(' ').toLowerCase().includes(q))).sort((a,b)=>a.t.name.localeCompare(b.t.name,'th')||a.id.localeCompare(b.id));
   $('#certCount').textContent=`${rows.length} เครื่อง`;
-  $('#certTable tbody').innerHTML=rows.map(it=>{ const cs=certsOf(it); const pills=Object.keys(cs).sort().reverse().map(y=>{ const c=cs[y]; const f=c.store&&c.store!=='none'; return `<span class="certpill ${f?'':'nofile'}" title="${esc(c.name||'')} · ${thDate(c.at)} · ${esc(c.by||'')}">${c.year||y} · ${esc(c.certNo)}${f?`<button data-open="${esc(it.id)}" data-y="${y}">เปิด</button>`:''}${can?`<button data-delc="${esc(it.id)}" data-y="${y}" aria-label="ลบ">×</button>`:''}</span>`; }).join('');
-    return `<tr><td class="mono">${esc(it.id)}</td><td>${esc(it.t.name)}</td><td><span class="chip ${STL[it.st][1]}">${STL[it.st][0]}</span></td><td class="mono hint">${esc(it.cert)||'—'}</td><td><div class="certlist">${pills||'<span class="hint">ยังไม่มี</span>'}</div></td><td><button class="btn sm" data-attach="${esc(it.id)}" ${can?'':'disabled'}>แนบไฟล์</button></td></tr>`; }).join('')||'<tr><td colspan="6" class="hint">ไม่มีรายการ</td></tr>';
+  $('#certTable tbody').innerHTML=rows.map(it=>{ const cs=certsOf(it); const pills=Object.keys(cs).sort().reverse().map(y=>{ const c=cs[y]; const f=c.store&&c.store!=='none'; return `<span class="certpill ${f?'':'nofile'}" title="${esc(c.name||'')} · ${thDate(c.at)} · ${esc(c.by||'')}"><b>${esc(c.kind||certKind(c.certNo))}</b> ${c.year||y} · ${esc(c.certNo)}${f?`<button data-open="${esc(it.id)}" data-y="${y}">เปิด</button>`:''}${can?`<button data-delc="${esc(it.id)}" data-y="${y}" aria-label="ลบ">×</button>`:''}</span>`; }).join('');
+    return `<tr><td class="mono">${esc(it.id)}</td><td>${esc(it.t.name)}</td><td><span class="chip ${STL[it.st][1]}">${STL[it.st][0]}</span></td><td class="mono hint">${esc(it.cert)||'—'}</td><td><div class="certlist">${pills||'<span class="hint">ยังไม่มี</span>'}</div></td><td><button class="btn sm" data-attach="${esc(it.id)}" ${can?'':'disabled'}>＋ แนบไฟล์ (หลายใบได้)</button></td></tr>`; }).join('')||'<tr><td colspan="6" class="hint">ไม่มีรายการ</td></tr>';
 }
 $('#certFac').onchange=e=>{ invFacKey=e.target.value; renderCert(); };
 $('#certSearch').oninput=renderCert; $('#certHas').onchange=renderCert;
@@ -1601,8 +1672,8 @@ $('#certTable tbody').addEventListener('click',e=>{ const t=e.target; const it=i
 $('#certExport').onclick=async()=>{
   const wb=new ExcelJS.Workbook();
   simpleSheet(wb,'สรุปรายหน่วยบริการ',['โซน','รพ.สต.','เครื่องมือ','มีเลขใบรับรอง','มีไฟล์ใบ cer','ยังไม่มีไฟล์','ความครบถ้วน (%)'],[...S.byFac].sort((a,b)=>(a.key.zone||99)-(b.key.zone||99)||a.key.name.localeCompare(b.key.name,'th')).map(f=>{ const c=f.items.filter(hasFile).length; return [f.key.zone||'ใหม่',f.key.name,f.total,f.items.filter(it=>it.cert||hasCertAny(it)).length,c,f.total-c,f.total?+(100*c/f.total).toFixed(1):0]; }),[8,32,12,16,14,14,18]);
-  const rows=[]; [...DS.items].sort((a,b)=>(a.f.zone||99)-(b.f.zone||99)||a.f.name.localeCompare(b.f.name,'th')||a.id.localeCompare(b.id)).forEach(it=>{ const cs=certsOf(it); const ys=Object.keys(cs).sort().reverse(); if(!ys.length) rows.push([it.f.zone||'ใหม่',it.f.name,it.id,it.t.name,STL[it.st][0],it.cert,'','','ไม่มี','','']); ys.forEach(y=>{ const c=cs[y]; rows.push([it.f.zone||'ใหม่',it.f.name,it.id,it.t.name,STL[it.st][0],it.cert,c.year||y,c.certNo,c.store&&c.store!=='none'?'มี':'ไม่มี (เฉพาะเลข)',c.name||'',thDate(c.at)+(c.by?' · '+c.by:'')]); }); });
-  simpleSheet(wb,'รายการใบรับรอง',['โซน','รพ.สต.','รหัสเครื่อง','ประเภท','ผลสอบเทียบ','เลขใบรับรองรอบ 2568','ปี พ.ศ. ของใบที่แนบ','เลขใบรับรองที่แนบ','ไฟล์','ชื่อไฟล์','อัปโหลดเมื่อ / โดย'],rows,[7,28,18,34,12,24,14,24,14,36,28]);
+  const rows=[]; [...DS.items].sort((a,b)=>(a.f.zone||99)-(b.f.zone||99)||a.f.name.localeCompare(b.f.name,'th')||a.id.localeCompare(b.id)).forEach(it=>{ const cs=certsOf(it); const ys=Object.keys(cs).sort().reverse(); if(!ys.length) rows.push([it.f.zone||'ใหม่',it.f.name,it.id,it.t.name,STL[it.st][0],it.cert,'','','','ไม่มี','','']); ys.forEach(y=>{ const c=cs[y]; rows.push([it.f.zone||'ใหม่',it.f.name,it.id,it.t.name,STL[it.st][0],it.cert,c.year||y,c.kind||certKind(c.certNo),c.certNo,c.store&&c.store!=='none'?'มี':'ไม่มี (เฉพาะเลข)',c.name||'',thDate(c.at)+(c.by?' · '+c.by:'')]); }); });
+  simpleSheet(wb,'รายการใบรับรอง',['โซน','รพ.สต.','รหัสเครื่อง','ประเภท','ผลสอบเทียบ','เลขใบรับรองรอบ 2568','ปี พ.ศ. ของใบที่แนบ','ชนิดใบ','เลขใบรับรองที่แนบ','ไฟล์','ชื่อไฟล์','อัปโหลดเมื่อ / โดย'],rows,[7,28,18,34,12,24,14,12,24,14,36,28]);
   logAct('ออกรายงานใบ cer'); await saveWb(wb,sess.role==='fac'?`รายงานใบcer_${curFac()?.name||''}.xlsx`:'รายงานใบรับรองผลสอบเทียบ_ทุกรพสต.xlsx');
 };
 
@@ -1614,7 +1685,7 @@ const svSend=(doc,it)=>!(doc&&doc.sel&&doc.sel[docId(it.id)]&&doc.sel[docId(it.i
 function svLoadW(force){ const k=svDocKey(svYearSel,svFacKey); if(!force&&svW&&svW.k===k&&svW.dirty) return; const d=svDoc(svYearSel,svFacKey); svW={k,sel:clone((d&&d.sel)||{}),reporter:(d&&d.reporter)||'',phone:(d&&d.phone)||'',note:(d&&d.note)||'',dirty:false}; $('#svRep').value=svW.reporter; $('#svPhone').value=svW.phone; $('#svNote').value=svW.note; }
 function renderSurvey(){
   if(!DS||$('#v-plan').hidden||!sess) return;
-  const sv=cfg().surveys; const years=Object.keys(sv).sort(); if(!svYearSel||!sv[svYearSel]) svYearSel=years[years.length-1];
+  const sv=cfg().surveys; const years=Object.keys(sv).sort(); if(!svYearSel||!sv[svYearSel]) svYearSel=sv[fyNow()]?String(fyNow()):years[years.length-1];
   $('#svYear').innerHTML=years.map(y=>`<option value="${y}">${y}</option>`).join(''); $('#svYear').value=svYearSel;
   const round=sv[svYearSel]||{open:true}; const open=round.open!==false;
   $('#svState').innerHTML=(open?'<span class="chip good">เปิดรับแบบสำรวจ</span>':'<span class="chip neutral">ปิดรับแล้ว</span>')+(round.deadline?` <span class="hint">กำหนดส่ง ${esc(round.deadline)}</span>`:'');
@@ -1636,11 +1707,18 @@ function renderSurvey(){
   $('#svFormTitle').textContent=`แบบสำรวจปีงบ ${svYearSel} · ${fac.name}`;
   $('#svFormState').innerHTML=d&&d.status==='submitted'?`<span class="chip good">ส่งแล้ว ${thDate(d.at)}</span>`:d?'<span class="chip warn">บันทึกร่างไว้ ยังไม่ส่ง</span>':'<span class="chip neutral">ยังไม่ได้กรอก</span>';
   const its=main.items.filter(it=>it.f===fac).sort((a,b)=>a.t.name.localeCompare(b.t.name,'th')||a.id.localeCompare(b.id));
+  const prevY=String(+svYearSel-1), prevDoc=svDoc(prevY,svFacKey); $('#svPrevTh').textContent='ปีงบ '+prevY;
   let n=0; const why=['ชำรุด รอซ่อม/จำหน่าย','เลิกใช้งาน','สอบเทียบแล้วโดยหน่วยงานอื่น','ไม่อยู่ในเกณฑ์ต้องสอบเทียบ','อื่น ๆ'];
   $('#svTable tbody').innerHTML=its.map(it=>{ const k=docId(it.id); const s=svW.sel[k]; const snd=!(s&&s.send===false); if(snd) n++;
-    return `<tr><td><input type="checkbox" class="rowsel" data-sv="${k}" ${snd?'checked':''} ${can?'':'disabled'} aria-label="ส่ง ${esc(it.id)}"></td><td class="mono">${esc(it.id)}</td><td>${esc(it.t.name)}</td><td class="hint">${esc([it.brand,it.model].filter(Boolean).join(' ')||'—')}</td><td><span class="chip ${STL[it.st][1]}">${STL[it.st][0]}</span></td><td>${snd?'':`<select class="planin" data-svwhy="${k}" ${can?'':'disabled'}><option value="">— ระบุเหตุผล —</option>${why.map(w=>`<option ${s&&s.why===w?'selected':''}>${w}</option>`).join('')}</select>`}</td></tr>`; }).join('')||'<tr><td colspan="6" class="hint">ยังไม่มีเครื่องมือในทะเบียน ให้เพิ่มที่แท็บ “ทะเบียนเครื่องมือ” ก่อน</td></tr>';
+    return `<tr><td><input type="checkbox" class="rowsel" data-sv="${k}" ${snd?'checked':''} ${can?'':'disabled'} aria-label="ส่ง ${esc(it.id)}"></td><td class="mono">${esc(it.id)}</td><td>${esc(it.t.name)}</td><td class="hint">${esc([it.brand,it.model].filter(Boolean).join(' ')||'—')}</td><td><span class="chip ${STL[it.st][1]}">${STL[it.st][0]}</span></td><td class="hint">${!prevDoc?'—':svSend(prevDoc,it)?'ส่ง':'ไม่ส่ง'}</td><td>${snd?'':`<select class="planin" data-svwhy="${k}" ${can?'':'disabled'}><option value="">— ระบุเหตุผล —</option>${why.map(w=>`<option ${s&&s.why===w?'selected':''}>${w}</option>`).join('')}</select>`}</td></tr>`; }).join('')||'<tr><td colspan="7" class="hint">ยังไม่มีเครื่องมือในทะเบียน ให้เพิ่มที่แท็บ “ทะเบียนเครื่องมือ” ก่อน</td></tr>';
   $('#svCount').textContent=`จะส่ง ${n} จาก ${its.length} เครื่อง`;
   ['#svDraft','#svSubmit','#svAll','#svNone','#svRep','#svPhone','#svNote'].forEach(s=>$(s).disabled=!can);
+  $('#svCopy').disabled=!can||!prevDoc; $('#svCopy').textContent=`ใช้คำตอบเดียวกับปีงบ ${prevY}`;
+  $('#svHistTable tbody').innerHTML=years.slice().reverse().map(y=>{ const r=sv[y]||{}; const op=r.open!==false; let cells;
+    if(isAdmin()){ let nS=0,cf=0,ns=0; for(const f of S.byFac){ const dd=svDoc(y,f.key.key); if(dd&&dd.status==='submitted'){ nS++; cf+=dd.nSend||0; ns+=(dd.nTotal||0)-(dd.nSend||0); } } cells=`<td class="r num">${nS} / ${S.nFac}</td><td class="r num">${fmt(cf)}</td><td class="r num">${fmt(ns)}</td>`; }
+    else { const dd=svDoc(y,svFacKey); cells=`<td>${dd&&dd.status==='submitted'?'<span class="chip good">ส่งแล้ว</span>':dd?'<span class="chip warn">ร่าง</span>':'<span class="chip neutral">ยังไม่ส่ง</span>'}</td><td class="r num">${dd?`${dd.nSend} / ${dd.nTotal}`:'—'}</td><td class="hint">${dd&&dd.status==='submitted'?thDate(dd.at):'—'}</td>`; }
+    return `<tr class="click" data-y="${y}" ${y===svYearSel?'style="font-weight:600"':''}><td>ปีงบ ${y}${+y===fyNow()?' <span class="chip info plain">ปีปัจจุบัน</span>':''}</td><td>${op?'<span class="chip good">เปิดรับ</span>':'<span class="chip neutral">ปิดรับ</span>'}${r.deadline?` <span class="hint">ถึง ${esc(r.deadline)}</span>`:''}</td>${cells}</tr>`; }).join('');
+  $('#svHistHead').innerHTML=isAdmin()?'<th>ปีงบประมาณ</th><th>สถานะรอบ</th><th class="r">ส่งแบบแล้ว</th><th class="r">ยืนยันส่ง (เครื่อง)</th><th class="r">แจ้งไม่ส่ง</th>':'<th>ปีงบประมาณ</th><th>สถานะรอบ</th><th>แบบของ รพ.สต.</th><th class="r">ส่ง / ทั้งหมด</th><th>วันที่ส่ง</th>';
 }
 $('#svYear').onchange=e=>{ svYearSel=e.target.value; svW=null; renderSurvey(); };
 $('#svFac').onchange=e=>{ svFacKey=e.target.value; svW=null; renderSurvey(); };
@@ -1649,6 +1727,14 @@ $$('#svSeg button').forEach(b=>b.onclick=()=>{ svFilter=b.dataset.v; $$('#svSeg 
 $('#svTable tbody').addEventListener('change',e=>{ const t=e.target; if(t.dataset.sv){ if(t.checked) delete svW.sel[t.dataset.sv]; else svW.sel[t.dataset.sv]={send:false,why:''}; svW.dirty=true; renderSurvey(); } else if(t.dataset.svwhy){ svW.sel[t.dataset.svwhy]={send:false,why:t.value}; svW.dirty=true; } });
 ['#svRep','#svPhone','#svNote'].forEach(s=>$(s).addEventListener('input',()=>{ if(svW){ svW.reporter=$('#svRep').value; svW.phone=$('#svPhone').value; svW.note=$('#svNote').value; svW.dirty=true; } }));
 $('#svAll').onclick=()=>{ svW.sel={}; svW.dirty=true; renderSurvey(); };
+$('#svCopy').onclick=()=>{ const p=svDoc(String(+svYearSel-1),svFacKey); if(!p) return; svW.sel=clone(p.sel||{}); if(!svW.reporter) svW.reporter=p.reporter||''; if(!svW.phone) svW.phone=p.phone||''; $('#svRep').value=svW.reporter; $('#svPhone').value=svW.phone; svW.dirty=true; renderSurvey(); toast('นำคำตอบปีก่อนมาใส่แล้ว ตรวจสอบแล้วกดส่งแบบสำรวจ'); };
+$('#svHistTable tbody').addEventListener('click',e=>{ const tr=e.target.closest('tr[data-y]'); if(tr){ svYearSel=tr.dataset.y; svW=null; renderSurvey(); } });
+/* type-to-search facility pickers */
+function fillFacDL(){ if(!DS) return; $('#facDL').innerHTML=facList().map(f=>`<option value="${esc(facLabel(f))}${f.code?' ['+esc(f.code)+']':''}">`).join(''); }
+$$('.facfind').forEach(inp=>{ const go=final=>{ const q=inp.value.trim(); if(!q) return; const fl=facList(); const lab=f=>facLabel(f)+(f.code?' ['+f.code+']':'');
+    let m=fl.filter(f=>lab(f)===q); if(!m.length) m=fl.filter(f=>f.code===q); if(!m.length&&final){ const c=fl.filter(f=>lab(f).includes(q)||(f.alias||'').includes(q)); if(c.length===1) m=c; else if(c.length>1){ toast(`พบ ${c.length} แห่ง พิมพ์เพิ่มหรือเลือกจากรายการ`); return; } else { toast('ไม่พบ รพ.สต. ที่ค้นหา'); return; } }
+    if(m.length){ const sel=$('#'+inp.dataset.for); sel.value=m[0].key; sel.dispatchEvent(new Event('change')); inp.value=''; inp.blur(); } };
+  inp.addEventListener('input',()=>go(false)); inp.addEventListener('change',()=>go(true)); inp.addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); go(true); } }); });
 $('#svNone').onclick=()=>{ DS.items.filter(it=>it.f.key===svFacKey).forEach(it=>{ const k=docId(it.id); svW.sel[k]=svW.sel[k]&&svW.sel[k].send===false?svW.sel[k]:{send:false,why:''}; }); svW.dirty=true; renderSurvey(); };
 function svSave(status){
   const its=DS.items.filter(it=>it.f.key===svFacKey); const valid=new Set(its.map(it=>docId(it.id)));
@@ -1676,7 +1762,7 @@ $('#svExport').onclick=async()=>{
 /* ================= Firebase backend (used when index.html is opened outside Claude) ================= */
 const FBCFG={apiKey:"AIzaSyA4PSynXPo9N44pgyaaYBiEjlEFzYYtQPU",authDomain:"lap-sakon.firebaseapp.com",databaseURL:"https://lap-sakon-default-rtdb.asia-southeast1.firebasedatabase.app",projectId:"lap-sakon",storageBucket:"lap-sakon.firebasestorage.app",messagingSenderId:"941136825542",appId:"1:941136825542:web:75c3692bdb09005a489bc7"};
 const FB_VER='10.12.2', FB_DOMAIN='lap-sakon.app';
-let fb=null, fbCodes={}, fbUsers={}, fbLog=[], fbMe=null, fbAdminSet=false, fbSubs=[], fbBusy=false;
+let fb=null, fbCodes={}, fbUsers={}, fbLog=[], fbMe=null, fbAdminSet=false, fbSubs=[], fbBusy=false, fbConnected=null;
 const fbPw=pw=>'lap#'+pw;
 const fbEmailAdmin=name=>String(name).toLowerCase()+'@'+FB_DOMAIN;
 const fbEmailFac=(code,gen)=>code+'-g'+gen+'@'+FB_DOMAIN;
@@ -1707,10 +1793,15 @@ async function fbLoad(){
   try{ await loadScript(base+'storage-compat.js'); }catch(e){}
 }
 async function fbInit(){
-  firebase.initializeApp(FBCFG);
-  fb={auth:firebase.auth(),db:firebase.database(),st:null}; try{ fb.st=firebase.storage(); }catch(e){}
+  if(fb) return;
+  if(!firebase.apps.some(a=>a.name==='[DEFAULT]')) firebase.initializeApp(FBCFG);
+  const next={auth:firebase.auth(),db:firebase.database(),st:null}; try{ next.st=firebase.storage(); }catch(e){}
+  // Verify the public bootstrap read before showing the login screen.
+  await next.db.ref('calib/meta/admin').once('value');
+  fb=next;
   store.mode='fb'; setNotes();
   try{ await fb.auth.setPersistence(firebase.auth.Auth.Persistence.SESSION); }catch(e){}
+  fb.db.ref('.info/connected').on('value',s=>{ fbConnected=!!s.val(); setNotes(); });
   fb.db.ref('calib/codes').on('value',s=>{ fbCodes=s.val()||{}; if(sess&&isAdmin()&&!$('#v-users').hidden) renderUsers(); },()=>{});
   fb.db.ref('calib/meta/admin').on('value',s=>{ fbAdminSet=!!s.val(); acctReady=true; if(!sess&&!pendingUser&&!fbBusy) authInit(); },err=>{ acctReady=true; fbAdminSet=true; authInit(); setErr('#liErr',fbErrMsg(err)); });
   fb.auth.onAuthStateChanged(u=>{ if(u&&!sess&&!fbBusy&&!pendingUser){ fbBusy=true; fbEnter(u,false).catch(e=>{ setErr('#liErr',fbErrMsg(e)); }).finally(()=>{ fbBusy=false; }); } });
@@ -1822,13 +1913,13 @@ function rebuild(){
   $('#roundSrc').textContent=ROUND?'ผลรอบที่นำเข้า (ดูอย่างเดียว)':'รายงานผู้รับจ้าง + ทะเบียนที่ปรับปรุง';
   $('#roundBanner').hidden=!ROUND; if(ROUND) $('#roundBannerTxt').textContent=`กำลังแสดงผลรอบที่นำเข้า “${ROUND.label}” · การแก้ไขทะเบียนใช้ได้ในทะเบียนหลัก`;
   fillSelects(); $('#pCur').value=S.nFac; $('#pAvg').value=(S.total/Math.max(1,S.nFac)).toFixed(1);
-  renderOverview(); renderFacilities(); renderTypes(); renderCapa(); renderPlan(); if(!$('#v-inventory').hidden) renderInventory(); renderCert(); renderSurvey(); if(!$('#v-users').hidden) renderUsers();
+  renderOverview(); renderFacilities(); renderTypes(); renderCapa(); renderPlan(); if(!$('#v-inventory').hidden) renderInventory(); fillFacDL(); renderCert(); renderSurvey(); if(!$('#v-users').hidden) renderUsers();
 }
 function renderLive(){ renderCapa(); renderOverview(); if(!$('#v-facilities').hidden) renderFacilities(); }
 let rbT=null; const rebuildSoon=()=>{clearTimeout(rbT); rbT=setTimeout(rebuild,60);};
 
 rebuild(); renderTargets(); dataQuality(); setNotes(); authInit();
-$('#footStamp').textContent='ปรับปรุงระบบ 6 ต.ค. 2569 · รุ่น Firebase';
+$('#footStamp').textContent='ปรับปรุงระบบ 6 ต.ค. 2569 · รุ่น Firebase 1.1';
 
 (async()=>{
   const c=window.claude;
