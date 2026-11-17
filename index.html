@@ -333,6 +333,14 @@ tbody tr:hover td{background:color-mix(in srgb,var(--accent-soft) 55%,transparen
 .facfind{border:1px solid var(--line-strong);background:var(--surface);border-radius:10px;padding:9px 12px;font-size:14.5px;min-width:0;width:100%}
 .exp{border-radius:14px}
 dialog{border-radius:20px}
+
+.exbox{margin-top:18px;border:2px dashed color-mix(in srgb,var(--c3) 45%,var(--line));border-radius:16px;padding:16px;background:linear-gradient(135deg,color-mix(in srgb,#10b981 7%,var(--surface)),color-mix(in srgb,#2563eb 5%,var(--surface)))}
+.exin{border:1px solid var(--line-strong);border-radius:8px;padding:6px 8px;background:var(--surface);font-size:13.5px;width:100%;min-width:90px}
+.exin.qty{width:70px;min-width:70px;text-align:right}
+.bkgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:14px}
+.bkcard{border:1px solid var(--line);border-radius:14px;padding:16px;display:grid;gap:10px;align-content:start;background:var(--surface)}
+.bkcard h3{font-size:15.5px}
+.bkcard p{margin:0;font-size:13.5px;color:var(--ink-2)}
 </style>
 </head>
 <body>
@@ -662,6 +670,10 @@ dialog{border-radius:20px}
         <span class="count" id="svCount"></span>
       </div>
       <div class="tbl-wrap"><table id="svTable"><thead><tr><th>ส่ง</th><th>รหัสเครื่อง</th><th>ประเภท</th><th>ยี่ห้อ / รุ่น</th><th>ผลล่าสุด</th><th id="svPrevTh">ปีก่อน</th><th>เหตุผลที่ไม่ส่ง</th></tr></thead><tbody></tbody></table></div>
+      <div class="exbox">
+        <div class="phead" style="margin-bottom:10px"><div><h3 style="font-size:16.5px">ส่งอุปกรณ์ตรวจเพิ่มเติม</h3><div class="hint">เครื่องที่ยังไม่มีในทะเบียน เช่น จัดซื้อใหม่ ได้รับบริจาค หรือรับโอนมา · รพ.สต. กรอกเอง ระบบนับรวมในยอดจัดจ้าง</div></div><button class="btn primary sm" id="svExAdd" type="button">＋ เพิ่มรายการ</button></div>
+        <div class="tbl-wrap"><table id="svExTable"><thead><tr><th>#</th><th>ประเภทเครื่องมือ *</th><th>ยี่ห้อ</th><th>รุ่น</th><th>S/N</th><th>เลขครุภัณฑ์</th><th class="r">จำนวน</th><th>หมายเหตุ</th><th></th></tr></thead><tbody></tbody></table></div>
+      </div>
       <div class="form" style="margin-top:16px">
         <div class="fld"><label for="svRep">ผู้รายงาน (ชื่อ–ตำแหน่ง) · กรอกตามสมัครใจ</label><input id="svRep"></div>
         <div class="fld"><label for="svPhone">เบอร์ติดต่อ · กรอกตามสมัครใจ</label><input id="svPhone" inputmode="tel"></div>
@@ -720,8 +732,19 @@ dialog{border-radius:20px}
       <div id="importMsg" class="hint" style="margin-top:10px"></div>
     </div>
     <div class="panel">
-      <div class="phead"><div><h2>สำรอง / กู้คืนข้อมูล</h2><div class="hint">เก็บสถานะการแก้ไขและทะเบียนที่ปรับปรุงเป็นไฟล์ .json ไว้ย้ายเครื่องหรือกู้คืน</div></div></div>
-      <div class="actions"><button class="btn" id="bkOut">สำรองข้อมูล (.json)</button><label class="btn" for="bkIn">กู้คืนจากไฟล์ .json</label><input type="file" id="bkIn" accept=".json,application/json" hidden></div>
+      <div class="phead"><div><h2><span class="ico" style="background:var(--t-violet);color:var(--i-violet)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v6c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 11v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/></svg></span>ระบบสำรองข้อมูล</h2><div class="hint">สำรองข้อมูลทั้งระบบจากฐานข้อมูลกลาง เก็บเป็นไฟล์ในเครื่องหรือใน Google Drive ของหน่วยงาน และกู้คืนได้เมื่อจำเป็น · เฉพาะผู้ดูแล</div></div><div id="bkStatus" class="syncnote">ยังไม่เคยสำรองข้อมูล</div></div>
+      <div class="bkgrid">
+        <div class="bkcard"><h3>สำรองลงเครื่องนี้</h3><p>ดาวน์โหลดไฟล์ .json ของข้อมูลทั้งหมด เก็บไว้ในเครื่อง แฟลชไดรฟ์ หรือส่งอีเมลเก็บไว้</p>
+          <label style="display:flex;gap:8px;align-items:center;font-size:13.5px"><input type="checkbox" id="bkWithFiles" class="rowsel"> รวมไฟล์ใบ cer ที่เก็บในฐานข้อมูล (ไฟล์จะใหญ่ขึ้น)</label>
+          <button class="btn primary" id="bkOut">ดาวน์โหลดไฟล์สำรอง (.json)</button></div>
+        <div class="bkcard"><h3>สำรองไป Google Drive</h3><p>เก็บในโฟลเดอร์ “สำรองข้อมูลระบบ” ของบัญชี Google ที่เชื่อมไว้ในแท็บใบ cer เก็บย้อนหลัง 60 ชุดล่าสุด</p>
+          <label style="display:flex;gap:8px;align-items:center;font-size:13.5px"><input type="checkbox" id="bkAuto" class="rowsel"> สำรองอัตโนมัติทุก 7 วัน เมื่อผู้ดูแลเปิดระบบ</label>
+          <button class="btn" id="bkDrive">สำรองไป Google Drive ตอนนี้</button><div id="bkDriveNote" class="hint"></div></div>
+        <div class="bkcard"><h3>กู้คืนข้อมูล</h3><p>เลือกไฟล์สำรอง หรือเลือกชุดจาก Google Drive ระบบจะสำรองข้อมูลปัจจุบันให้อัตโนมัติก่อนกู้คืนทุกครั้ง</p>
+          <div class="actions"><label class="btn" for="bkIn">เลือกไฟล์สำรอง (.json)</label><input type="file" id="bkIn" accept=".json,application/json" hidden><button class="btn" id="bkList">ดูชุดสำรองใน Drive</button></div></div>
+      </div>
+      <div id="bkPreview" style="margin-top:14px" hidden></div>
+      <div class="tbl-wrap" id="bkDriveWrap" style="margin-top:14px" hidden><table id="bkDriveTable"><thead><tr><th>ชุดสำรองใน Google Drive</th><th>วันที่</th><th class="r">ขนาด</th><th></th></tr></thead><tbody></tbody></table></div>
     </div>
     <div class="panel">
       <h2>ข้อสังเกตคุณภาพข้อมูลต้นทาง</h2>
@@ -982,7 +1005,7 @@ const tip=$('#tip');
 document.addEventListener('pointerover',e=>{const t=e.target.closest('[data-tip]'); if(!t){tip.style.opacity=0;return;} tip.innerHTML=t.dataset.tip; tip.style.opacity=1;});
 document.addEventListener('pointermove',e=>{if(tip.style.opacity==='1'){const w=tip.offsetWidth,h=tip.offsetHeight; let x=e.clientX+14,y=e.clientY+14; if(x+w>innerWidth-8)x=e.clientX-w-14; if(y+h>innerHeight-8)y=e.clientY-h-14; tip.style.left=x+'px'; tip.style.top=y+'px';}});
 function toast(msg){const t=$('#toast'); t.textContent=msg; t.classList.add('on'); clearTimeout(toast._t); toast._t=setTimeout(()=>t.classList.remove('on'),2800);}
-function showTab(k){ $$('nav.tabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===k)); $$('section.view').forEach(v=>v.hidden=v.id!=='v-'+k); try{localStorage.setItem('calib.tab',k);}catch(e){} if(k==='inventory') renderInventory(); else if(k==='cert') renderCert(); else if(k==='plan') renderSurvey(); else if(k==='users') renderUsers(); }
+function showTab(k){ $$('nav.tabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===k)); $$('section.view').forEach(v=>v.hidden=v.id!=='v-'+k); try{localStorage.setItem('calib.tab',k);}catch(e){} if(k==='inventory') renderInventory(); else if(k==='cert') renderCert(); else if(k==='plan') renderSurvey(); else if(k==='users') renderUsers(); else if(k==='data') renderBackup(); }
 $$('nav.tabs button').forEach(b=>b.onclick=()=>{showTab(b.dataset.tab); window.scrollTo({top:0});});
 const openDlg=d=>{ if(d.showModal) d.showModal(); else d.setAttribute('open',''); };
 const IC={
@@ -1719,7 +1742,7 @@ let svYearSel=null, svFacKey=null, svW=null, svFilter='all';
 const svDocKey=(y,fk)=>y+'_'+fk;
 const svDoc=(y,fk)=>store.survey.get(svDocKey(y,fk));
 const svSend=(doc,it)=>!(doc&&doc.sel&&doc.sel[docId(it.id)]&&doc.sel[docId(it.id)].send===false);
-function svLoadW(force){ const k=svDocKey(svYearSel,svFacKey); if(!force&&svW&&svW.k===k&&svW.dirty) return; const d=svDoc(svYearSel,svFacKey); svW={k,sel:clone((d&&d.sel)||{}),reporter:(d&&d.reporter)||'',phone:(d&&d.phone)||'',note:(d&&d.note)||'',dirty:false}; $('#svRep').value=svW.reporter; $('#svPhone').value=svW.phone; $('#svNote').value=svW.note; }
+function svLoadW(force){ const k=svDocKey(svYearSel,svFacKey); if(!force&&svW&&svW.k===k&&svW.dirty) return; const d=svDoc(svYearSel,svFacKey); svW={k,sel:clone((d&&d.sel)||{}),extra:clone((d&&d.extra)||[]),reporter:(d&&d.reporter)||'',phone:(d&&d.phone)||'',note:(d&&d.note)||'',dirty:false}; $('#svRep').value=svW.reporter; $('#svPhone').value=svW.phone; $('#svNote').value=svW.note; }
 function renderSurvey(){
   if(!DS||$('#v-plan').hidden||!sess) return;
   const sv=cfg().surveys; const years=Object.keys(sv).sort(); if(!svYearSel||!sv[svYearSel]) svYearSel=sv[fyNow()]?String(fyNow()):years[years.length-1];
@@ -1733,9 +1756,10 @@ function renderSurvey(){
     let nSub=0,conf=0,est=0,notSend=0; const byType=new Map(); const rows=[];
     for(const f of S.byFac){ const d=svDoc(svYearSel,f.key.key); const sub=d&&d.status==='submitted'; if(sub) nSub++; let s=0,ns=0;
       for(const it of f.items){ const snd=svSend(d,it); if(snd) s++; else ns++; if(snd){ let t=byType.get(it.t.name); if(!t){ t={c:0,e:0}; byType.set(it.t.name,t);} if(sub) t.c++; else t.e++; } }
+      if(sub) for(const x of (d.extra||[])){ const q=+x.qty||1; s+=q; let t=byType.get(x.type); if(!t){ t={c:0,e:0}; byType.set(x.type,t);} t.c+=q; }
       if(sub){ conf+=s; notSend+=ns; } else est+=s; rows.push({f,d,sub,s,ns}); }
     $('#svKpis').innerHTML=[['k-green','ส่งแบบสำรวจแล้ว',`${nSub} / ${S.nFac} แห่ง`,`${pct(nSub,S.nFac,0)}%`],['k-blue','ยืนยันส่งสอบเทียบ',fmt(conf)+' เครื่อง','จากแห่งที่ส่งแบบแล้ว'],['k-orange','ประมาณจากแห่งที่ยังไม่ส่ง',fmt(est)+' เครื่อง','นับทุกเครื่องในทะเบียน'],['k-violet','รวมสำหรับจัดจ้าง',fmt(conf+est)+' เครื่อง',`แจ้งไม่ส่ง ${fmt(notSend)} เครื่อง`]].map(([c,l,v,x])=>`<div class="kpi ${c}"><div class="l">${l}</div><div class="v num">${v}</div><div class="s">${x}</div></div>`).join('');
-    $('#svFacTable tbody').innerHTML=rows.filter(r=>svFilter==='all'||!r.sub).sort((a,b)=>(a.f.key.zone||99)-(b.f.key.zone||99)||a.f.key.name.localeCompare(b.f.key.name,'th')).map(r=>`<tr class="click" data-fk="${r.f.key.key}"><td>${esc(r.f.key.name)}</td><td>${r.sub?'<span class="chip good">ส่งแล้ว</span>':r.d?'<span class="chip warn">ร่าง</span>':'<span class="chip neutral">ยังไม่ส่ง</span>'}</td><td class="r num">${r.s}</td><td class="r num">${r.ns||'<span class="hint">0</span>'}</td><td class="hint">${r.sub?thDate(r.d.at):'—'}</td></tr>`).join('');
+    $('#svFacTable tbody').innerHTML=rows.filter(r=>svFilter==='all'||!r.sub).sort((a,b)=>(a.f.key.zone||99)-(b.f.key.zone||99)||a.f.key.name.localeCompare(b.f.key.name,'th')).map(r=>`<tr class="click" data-fk="${r.f.key.key}"><td>${esc(r.f.key.name)}</td><td>${r.sub?'<span class="chip good">ส่งแล้ว</span>':r.d?'<span class="chip warn">ร่าง</span>':'<span class="chip neutral">ยังไม่ส่ง</span>'}</td><td class="r num">${r.s}${r.sub&&r.d.extra&&r.d.extra.length?` <span class="chip new plain">+${r.d.extra.reduce((a,x)=>a+(+x.qty||1),0)} เพิ่ม</span>`:''}</td><td class="r num">${r.ns||'<span class="hint">0</span>'}</td><td class="hint">${r.sub?thDate(r.d.at):'—'}</td></tr>`).join('');
     $('#svTypeTable tbody').innerHTML=[...byType].sort((a,b)=>(b[1].c+b[1].e)-(a[1].c+a[1].e)).map(([n,t])=>`<tr><td>${esc(n)}</td><td class="r num">${fmt(t.c)}</td><td class="r num">${fmt(t.e)}</td><td class="r num"><b>${fmt(t.c+t.e)}</b></td></tr>`).join('');
     $('#svFac').innerHTML=facs.map(f=>`<option value="${f.key}">${esc(facLabel(f))}</option>`).join(''); $('#svFac').value=svFacKey;
   }
@@ -1748,8 +1772,10 @@ function renderSurvey(){
   let n=0; const why=['ชำรุด รอซ่อม/จำหน่าย','เลิกใช้งาน','สอบเทียบแล้วโดยหน่วยงานอื่น','ไม่อยู่ในเกณฑ์ต้องสอบเทียบ','อื่น ๆ'];
   $('#svTable tbody').innerHTML=its.map(it=>{ const k=docId(it.id); const s=svW.sel[k]; const snd=!(s&&s.send===false); if(snd) n++;
     return `<tr><td><input type="checkbox" class="rowsel" data-sv="${k}" ${snd?'checked':''} ${can?'':'disabled'} aria-label="ส่ง ${esc(it.id)}"></td><td class="mono">${esc(it.id)}</td><td>${esc(it.t.name)}</td><td class="hint">${esc([it.brand,it.model].filter(Boolean).join(' ')||'—')}</td><td><span class="chip ${STL[it.st][1]}">${STL[it.st][0]}</span></td><td class="hint">${!prevDoc?'—':svSend(prevDoc,it)?'ส่ง':'ไม่ส่ง'}</td><td>${snd?'':`<select class="planin" data-svwhy="${k}" ${can?'':'disabled'}><option value="">— ระบุเหตุผล —</option>${why.map(w=>`<option ${s&&s.why===w?'selected':''}>${w}</option>`).join('')}</select>`}</td></tr>`; }).join('')||'<tr><td colspan="7" class="hint">ยังไม่มีเครื่องมือในทะเบียน ให้เพิ่มที่แท็บ “ทะเบียนเครื่องมือ” ก่อน</td></tr>';
-  $('#svCount').textContent=`จะส่ง ${n} จาก ${its.length} เครื่อง`;
-  ['#svDraft','#svSubmit','#svAll','#svNone','#svRep','#svPhone','#svNote'].forEach(s=>$(s).disabled=!can);
+  const exQ=(svW.extra||[]).reduce((a,x)=>a+(x.type?(+x.qty||1):0),0);
+  $('#svCount').textContent=`จะส่ง ${n} จาก ${its.length} เครื่องในทะเบียน`+(exQ?` + เพิ่มเติม ${exQ} เครื่อง`:'');
+  renderSvExtra(can);
+  ['#svDraft','#svSubmit','#svAll','#svNone','#svRep','#svPhone','#svNote','#svExAdd'].forEach(s=>$(s).disabled=!can);
   $('#svCopy').disabled=!can||!prevDoc; $('#svCopy').textContent=`ใช้คำตอบเดียวกับปีงบ ${prevY}`;
   $('#svHistTable tbody').innerHTML=years.slice().reverse().map(y=>{ const r=sv[y]||{}; const op=r.open!==false; let cells;
     if(isAdmin()){ let nS=0,cf=0,ns=0; for(const f of S.byFac){ const dd=svDoc(y,f.key.key); if(dd&&dd.status==='submitted'){ nS++; cf+=dd.nSend||0; ns+=(dd.nTotal||0)-(dd.nSend||0); } } cells=`<td class="r num">${nS} / ${S.nFac}</td><td class="r num">${fmt(cf)}</td><td class="r num">${fmt(ns)}</td>`; }
@@ -1764,7 +1790,7 @@ $$('#svSeg button').forEach(b=>b.onclick=()=>{ svFilter=b.dataset.v; $$('#svSeg 
 $('#svTable tbody').addEventListener('change',e=>{ const t=e.target; if(t.dataset.sv){ if(t.checked) delete svW.sel[t.dataset.sv]; else svW.sel[t.dataset.sv]={send:false,why:''}; svW.dirty=true; renderSurvey(); } else if(t.dataset.svwhy){ svW.sel[t.dataset.svwhy]={send:false,why:t.value}; svW.dirty=true; } });
 ['#svRep','#svPhone','#svNote'].forEach(s=>$(s).addEventListener('input',()=>{ if(svW){ svW.reporter=$('#svRep').value; svW.phone=$('#svPhone').value; svW.note=$('#svNote').value; svW.dirty=true; } }));
 $('#svAll').onclick=()=>{ svW.sel={}; svW.dirty=true; renderSurvey(); };
-$('#svCopy').onclick=()=>{ const p=svDoc(String(+svYearSel-1),svFacKey); if(!p) return; svW.sel=clone(p.sel||{}); if(!svW.reporter) svW.reporter=p.reporter||''; if(!svW.phone) svW.phone=p.phone||''; $('#svRep').value=svW.reporter; $('#svPhone').value=svW.phone; svW.dirty=true; renderSurvey(); toast('นำคำตอบปีก่อนมาใส่แล้ว ตรวจสอบแล้วกดส่งแบบสำรวจ'); };
+$('#svCopy').onclick=()=>{ const p=svDoc(String(+svYearSel-1),svFacKey); if(!p) return; svW.sel=clone(p.sel||{}); if(!(svW.extra||[]).length) svW.extra=clone(p.extra||[]); if(!svW.reporter) svW.reporter=p.reporter||''; if(!svW.phone) svW.phone=p.phone||''; $('#svRep').value=svW.reporter; $('#svPhone').value=svW.phone; svW.dirty=true; renderSurvey(); toast('นำคำตอบปีก่อนมาใส่แล้ว ตรวจสอบแล้วกดส่งแบบสำรวจ'); };
 $('#svHistTable tbody').addEventListener('click',e=>{ const tr=e.target.closest('tr[data-y]'); if(tr){ svYearSel=tr.dataset.y; svW=null; renderSurvey(); } });
 /* type-to-search facility pickers */
 function fillFacDL(){ if(!DS) return; $('#facDL').innerHTML=facList().map(f=>`<option value="${esc(facLabel(f))}${f.code?' ['+esc(f.code)+']':''}">`).join(''); }
@@ -1777,7 +1803,11 @@ function svSave(status){
   const its=DS.items.filter(it=>it.f.key===svFacKey); const valid=new Set(its.map(it=>docId(it.id)));
   const sel={}; for(const [k,v] of Object.entries(svW.sel)) if(valid.has(k)&&v.send===false) sel[k]={send:false,why:v.why||''};
   if(status==='submitted'&&Object.values(sel).some(v=>!v.why)){ toast('กรุณาระบุเหตุผลของเครื่องที่ไม่ส่งให้ครบ'); return; }
-  const doc=stamp({year:svYearSel,facKey:svFacKey,sel,nSend:its.length-Object.keys(sel).length,nTotal:its.length,reporter:svW.reporter.trim().slice(0,80),phone:svW.phone.trim().slice(0,30),note:svW.note.trim().slice(0,500),status});
+  const raw=(svW.extra||[]).filter(x=>Object.entries(x).some(([k,v])=>k!=='qty'&&String(v||'').trim()));
+  if(raw.some(x=>!String(x.type||'').trim())){ toast('อุปกรณ์ตรวจเพิ่มเติม: กรุณาระบุประเภทเครื่องมือให้ครบทุกแถว'); return; }
+  const extra=raw.map(x=>({type:String(x.type).trim().slice(0,120),brand:String(x.brand||'').trim().slice(0,60),model:String(x.model||'').trim().slice(0,60),sn:String(x.sn||'').trim().slice(0,60),asset:String(x.asset||'').trim().slice(0,60),qty:Math.max(1,Math.min(99,Math.round(+x.qty||1))),note:String(x.note||'').trim().slice(0,200)}));
+  const exQ=extra.reduce((a,x)=>a+x.qty,0);
+  const doc=stamp({year:svYearSel,facKey:svFacKey,sel,extra,nExtra:exQ,nSend:its.length-Object.keys(sel).length+exQ,nTotal:its.length+exQ,reporter:svW.reporter.trim().slice(0,80),phone:svW.phone.trim().slice(0,30),note:svW.note.trim().slice(0,500),status});
   svW.dirty=false; const p=putDoc('survey',svDocKey(svYearSel,svFacKey),doc); logAct(status==='submitted'?'ส่งแบบสำรวจประจำปี':'บันทึกร่างแบบสำรวจ',`ปีงบ ${svYearSel} · ส่ง ${doc.nSend}/${doc.nTotal}`); renderSurvey(); p.then(()=>toast(status==='submitted'?'ส่งแบบสำรวจแล้ว':'บันทึกร่างแล้ว'),()=>{});
 }
 $('#svDraft').onclick=()=>svSave('draft'); $('#svSubmit').onclick=()=>svSave('submitted');
@@ -1785,16 +1815,96 @@ $('#svOpenNew').onclick=()=>{ const y=String(+$('#svNewYear').value||''); if(!/^
 $('#svSaveDl').onclick=()=>{ const sv=clone(cfg().surveys); sv[svYearSel]={...(sv[svYearSel]||{open:true}),deadline:$('#svDeadline').value.trim()}; saveCfg({surveys:sv}); renderSurvey(); toast('บันทึกกำหนดส่งแล้ว'); };
 $('#svToggle').onclick=()=>{ const sv=clone(cfg().surveys); const r=sv[svYearSel]||{open:true}; r.open=r.open===false; sv[svYearSel]=r; saveCfg({surveys:sv}); logAct(r.open?'เปิดรับแบบสำรวจ':'ปิดรับแบบสำรวจ','ปีงบ '+svYearSel); renderSurvey(); };
 $('#svExport').onclick=async()=>{
-  const wb=new ExcelJS.Workbook(); const byType=new Map(), facRows=[], itemRows=[];
+  const wb=new ExcelJS.Workbook(); const byType=new Map(), facRows=[], itemRows=[], exRows=[];
   for(const f of [...S.byFac].sort((a,b)=>(a.key.zone||99)-(b.key.zone||99)||a.key.name.localeCompare(b.key.name,'th'))){ const d=svDoc(svYearSel,f.key.key); const sub=d&&d.status==='submitted'; let s=0,ns=0;
     for(const it of [...f.items].sort((a,b)=>a.id.localeCompare(b.id))){ const snd=svSend(d,it); if(snd){ s++; let t=byType.get(it.t.name); if(!t){ t={cat:it.t.cat,c:0,e:0}; byType.set(it.t.name,t);} if(sub) t.c++; else t.e++; } else ns++;
       itemRows.push([f.key.zone||'ใหม่',f.key.name,it.id,it.t.name,it.brand,it.model,it.sn,it.assetNo,STL[it.st][0],snd?'ส่ง':'ไม่ส่ง',snd?'':(d.sel[docId(it.id)].why||''),sub?'ยืนยันแล้ว':'ประมาณ (ยังไม่ส่งแบบ)']); }
+      for(const x of ((sub&&d.extra)||[])){ const q=+x.qty||1; s+=q; let t=byType.get(x.type); if(!t){ const m=TMAP[x.type]; t={cat:m?m[1]:'อุปกรณ์เพิ่มเติม',c:0,e:0}; byType.set(x.type,t);} t.c+=q; exRows.push([f.key.amphoe||'',f.key.name,f.key.code||'',x.type,x.brand,x.model,x.sn,x.asset,q,x.note]); }
     facRows.push([f.key.zone||'ใหม่',f.key.name,sub?'ส่งแล้ว':d?'ร่าง':'ยังไม่ส่ง',f.total,s,ns,sub?thDate(d.at):'',d?d.reporter||'':'',d?d.phone||'':'',d?d.note||'':'']); }
   simpleSheet(wb,'สรุปตามประเภท',['ประเภทเครื่องมือ','กลุ่มงาน','ยืนยันแล้ว','ประมาณ (ยังไม่ส่งแบบ)','รวม (เครื่อง)'],[...byType].sort((a,b)=>(b[1].c+b[1].e)-(a[1].c+a[1].e)).map(([n,t])=>[n,t.cat,t.c,t.e,t.c+t.e]),[44,28,14,22,14]);
   simpleSheet(wb,'รายหน่วยบริการ',['โซน','รพ.สต.','สถานะ','เครื่องในทะเบียน','ส่งสอบเทียบ','ไม่ส่ง','วันที่ส่งแบบ','ผู้รายงาน','เบอร์ติดต่อ','หมายเหตุ'],facRows,[7,30,12,16,14,10,22,26,16,36]);
   simpleSheet(wb,'รายการเครื่องมือ',['โซน','รพ.สต.','รหัสเครื่อง','ประเภท','ยี่ห้อ','รุ่น','S/N','เลขครุภัณฑ์','ผลล่าสุด','ส่งสอบเทียบ','เหตุผลที่ไม่ส่ง','สถานะข้อมูล'],itemRows,[7,28,18,34,16,16,18,18,12,12,26,22]);
+  simpleSheet(wb,'อุปกรณ์ตรวจเพิ่มเติม',['อำเภอ','รพ.สต.','รหัสสถานพยาบาล','ประเภทเครื่องมือ','ยี่ห้อ','รุ่น','S/N','เลขครุภัณฑ์','จำนวน','หมายเหตุ'],exRows,[16,30,14,36,16,16,18,18,10,30]);
   logAct('ส่งออกสรุปแบบสำรวจ','ปีงบ '+svYearSel); await saveWb(wb,`สรุปเครื่องมือส่งสอบเทียบ_ปีงบ${svYearSel}.xlsx`);
 };
+
+
+/* ---------- survey: extra equipment entered by รพ.สต. ---------- */
+function renderSvExtra(can){
+  const ex=svW.extra||(svW.extra=[]); const F=(i,k,ph,cls,extra)=>`<input class="exin ${cls||''}" data-ex="${i}" data-k="${k}" value="${esc(ex[i][k]??'')}" placeholder="${ph||''}" ${extra||''} ${can?'':'disabled'} aria-label="${k} แถว ${i+1}">`;
+  $('#svExTable tbody').innerHTML=ex.map((x,i)=>`<tr><td class="num hint">${i+1}</td><td style="min-width:280px">${F(i,'type','เลือกหรือพิมพ์ชื่อเครื่องมือ','','list="typeList"')}</td><td>${F(i,'brand')}</td><td>${F(i,'model')}</td><td>${F(i,'sn')}</td><td>${F(i,'asset')}</td><td class="r">${F(i,'qty','1','qty','type="number" min="1" max="99" inputmode="numeric"')}</td><td style="min-width:160px">${F(i,'note')}</td><td>${can?`<button class="btn sm danger" data-exdel="${i}" type="button" aria-label="ลบแถว ${i+1}">ลบ</button>`:''}</td></tr>`).join('')||`<tr><td colspan="9" class="hint">ยังไม่มีรายการ${can?' · กด “＋ เพิ่มรายการ” เพื่อกรอกเครื่องที่ต้องการส่งตรวจเพิ่ม':''}</td></tr>`;
+}
+$('#svExAdd').onclick=()=>{ if(!svW) return; (svW.extra=svW.extra||[]).push({type:'',brand:'',model:'',sn:'',asset:'',qty:1,note:''}); svW.dirty=true; renderSurvey(); const ins=$$('#svExTable input[data-k="type"]'); if(ins.length) ins[ins.length-1].focus(); };
+$('#svExTable tbody').addEventListener('input',e=>{ const el=e.target; if(el.dataset.ex==null) return; const x=svW.extra[+el.dataset.ex]; if(!x) return; x[el.dataset.k]=el.dataset.k==='qty'?(+el.value||1):el.value; svW.dirty=true; if(el.dataset.k==='qty'){ const exQ=svW.extra.reduce((a,y)=>a+(y.type?(+y.qty||1):0),0); $('#svCount').textContent=$('#svCount').textContent.replace(/ \+ เพิ่มเติม \d+ เครื่อง$/,'')+(exQ?` + เพิ่มเติม ${exQ} เครื่อง`:''); } });
+$('#svExTable tbody').addEventListener('change',e=>{ if(e.target.dataset.k==='type') renderSurvey(); });
+$('#svExTable tbody').addEventListener('click',e=>{ const b=e.target.closest('[data-exdel]'); if(!b) return; svW.extra.splice(+b.dataset.exdel,1); svW.dirty=true; renderSurvey(); });
+
+/* ---------- backup & restore (admin) ---------- */
+const BK_COLLS=['codes','cfg','inv','cert','survey','capa','files'];
+let bkBusy=false, bkPending=null;
+function bkDl(name,text){ const url=URL.createObjectURL(new Blob([text],{type:'application/json'})); const a=document.createElement('a'); a.href=url; a.download=name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),5000); }
+const bkName=()=>{ const d=new Date(), p=n=>String(n).padStart(2,'0'); return `สำรองระบบสอบเทียบ_${d.getFullYear()+543}-${p(d.getMonth()+1)}-${p(d.getDate())}_${p(d.getHours())}${p(d.getMinutes())}.json`; };
+async function bkGather(withFiles){
+  if(store.mode!=='fb'){ const o={app:'calib-sakon',v:3,at:new Date().toISOString()}; COLLS.forEach(c=>o[c]=Object.fromEntries(store[c])); return o; }
+  const R=p=>fb.db.ref(p).once('value').then(s=>s.val());
+  const o={app:'calib-sakon',v:4,kind:'firebase',at:new Date().toISOString(),by:sess.user,data:{}};
+  for(const k of ['meta','codes','users','cfg','inv','cert','survey','capa','log']) o.data[k]=await R('calib/'+k);
+  if(withFiles){ o.data.files={}; for(const f of buildMain().facs){ const v=await R('calib/files/'+fbKey(f.key)); if(v) o.data.files[fbKey(f.key)]=v; } }
+  return o;
+}
+function bkSummary(o){ const d=o.data||o; const n=k=>d[k]&&typeof d[k]==='object'?Object.keys(d[k]).length:0; let sv=0,cp=0; if(o.kind==='firebase'){ Object.values(d.survey||{}).forEach(x=>sv+=Object.keys(x||{}).length); Object.values(d.capa||{}).forEach(x=>cp+=Object.keys(x||{}).length); } else { sv=n('survey'); cp=n('capa'); }
+  return `ทะเบียนที่ปรับปรุง ${n('inv')} แห่ง · ใบ cer ${n('cert')} แห่ง · แบบสำรวจ ${sv} ชุด · ติดตามแก้ไข ${cp} รายการ · รหัส รพ.สต. ${n('codes')} · บัญชีผู้ใช้ ${n('users')}${d.files?` · ไฟล์ในฐานข้อมูล ${n('files')} แห่ง`:''}`; }
+async function bkMark(where,size){ await saveCfg({lastBackup:{at:new Date().toISOString(),by:sess.user,where,size}}).catch(()=>{}); logAct('สำรองข้อมูล',where); renderBackup(); }
+async function bkToDrive(auto){
+  if(bkBusy) return; if(!gasUrl()){ if(!auto) toast('ยังไม่ได้เชื่อม Google Drive (ตั้งค่าที่แท็บใบ cer)'); return; }
+  bkBusy=true; const note=$('#bkDriveNote'); note.textContent='กำลังสำรองไป Google Drive…';
+  try{ const o=await bkGather(false); const text=JSON.stringify(o); const j=await gasCall({action:'backup',name:bkName(),json:text}); await bkMark('Google Drive',text.length); note.textContent=`สำรองแล้ว · ${j.name||''}`; toast(auto?'สำรองข้อมูลอัตโนมัติไป Google Drive แล้ว':'สำรองไป Google Drive แล้ว'); }
+  catch(e){ note.textContent=(e.message||String(e))+(/คำสั่งไม่ถูกต้อง/.test(e.message||'')?' · ต้องอัปเดตโค้ด Apps Script เป็นรุ่นใหม่ก่อน':''); if(!auto) toast('สำรองไป Drive ไม่สำเร็จ'); }
+  finally{ bkBusy=false; }
+}
+function renderBackup(){
+  if(!sess||!isAdmin()) return; const lb=cfg().lastBackup; const st=$('#bkStatus');
+  const days=lb?(Date.now()-new Date(lb.at))/864e5:null;
+  st.className='syncnote '+(lb&&days<=7?'ok':'off');
+  st.textContent=lb?`สำรองล่าสุด ${thDate(lb.at)} · ${lb.where} · โดย ${lb.by}${days>7?' · เกิน 7 วันแล้ว ควรสำรองใหม่':''}`:'ยังไม่เคยสำรองข้อมูล · แนะนำให้สำรองทันที';
+  $('#bkAuto').checked=cfg().autoBackup!==false; $('#bkDrive').disabled=!gasUrl(); $('#bkList').disabled=!gasUrl()||store.mode!=='fb';
+  if(!gasUrl()) $('#bkDriveNote').textContent='ยังไม่ได้เชื่อม Google Drive · ตั้งค่าได้ที่แท็บ “ใบ cer”';
+  $('#bkWithFiles').parentElement.hidden=store.mode!=='fb';
+}
+$('#bkOut').onclick=async()=>{ if(bkBusy) return; bkBusy=true; const b=$('#bkOut'), t0=b.textContent; b.textContent='กำลังรวบรวมข้อมูล…';
+  try{ const o=await bkGather($('#bkWithFiles').checked); const text=JSON.stringify(o); bkDl(bkName(),text); await bkMark('ไฟล์ในเครื่อง',text.length); toast('ดาวน์โหลดไฟล์สำรองแล้ว'); }catch(e){ toast('สำรองไม่สำเร็จ: '+(e.message||e)); } finally{ bkBusy=false; b.textContent=t0; } };
+$('#bkDrive').onclick=()=>bkToDrive(false);
+$('#bkAuto').onchange=e=>{ saveCfg({autoBackup:e.target.checked}); };
+function bkShowPreview(o,src){
+  const box=$('#bkPreview'); box.hidden=false; bkPending=o;
+  const ok=o&&o.app==='calib-sakon'; if(!ok){ box.innerHTML='<div class="syncnote off">ไม่ใช่ไฟล์สำรองของระบบนี้</div>'; bkPending=null; return; }
+  const mismatch=(store.mode==='fb')!==(o.kind==='firebase');
+  box.innerHTML=`<div class="preview"><div><b>กู้คืนจาก ${esc(src)}</b> · สำรองเมื่อ ${thDate(o.at)}${o.by?' โดย '+esc(o.by):''}</div><div class="hint">${esc(bkSummary(o))}</div>
+    ${mismatch?'<div class="syncnote off">ไฟล์นี้มาจากระบบคนละโหมด (ออฟไลน์/Firebase) กู้คืนได้เฉพาะส่วนที่ตรงกัน</div>':''}
+    <div class="syncnote off">ข้อมูลของ รพ.สต. ที่อยู่ในไฟล์จะทับข้อมูลปัจจุบันของแห่งนั้น บัญชีผู้ใช้และประวัติการใช้งานจะไม่ถูกเปลี่ยน · ระบบจะสำรองข้อมูลปัจจุบันให้ก่อนอัตโนมัติ</div>
+    <div class="actions"><button class="btn danger" id="bkGo">ยืนยันกู้คืน</button><button class="btn" id="bkCancel">ยกเลิก</button></div></div>`;
+  $('#bkCancel').onclick=()=>{ bkPending=null; box.hidden=true; };
+  $('#bkGo').onclick=async()=>{ const b=$('#bkGo'); if(b.dataset.armed!=='1'){ b.dataset.armed='1'; b.textContent='กดอีกครั้งเพื่อยืนยัน'; return; } b.disabled=true; b.textContent='กำลังกู้คืน…'; await bkRestore(bkPending); };
+}
+async function bkRestore(o){
+  const box=$('#bkPreview');
+  try{
+    const cur=await bkGather(false); const curText=JSON.stringify(cur);
+    if(gasUrl()&&store.mode==='fb'){ try{ await gasCall({action:'backup',name:'ก่อนกู้คืน_'+bkName(),json:curText}); }catch(e){ bkDl('ก่อนกู้คืน_'+bkName(),curText); } } else bkDl('ก่อนกู้คืน_'+bkName(),curText);
+    let n=0;
+    if(store.mode==='fb'&&o.kind==='firebase'){ const d=o.data||{};
+      for(const c of BK_COLLS){ const v=d[c]; if(!v||typeof v!=='object') continue; for(const [k,val] of Object.entries(v)){ await fb.db.ref(`calib/${c}/${k}`).set(val); n++; } } }
+    else { const src=o.kind==='firebase'?null:o; if(!src) throw new Error('ไฟล์นี้ใช้กับโหมดออฟไลน์ไม่ได้'); for(const c of COLLS){ if(c==='log') continue; for(const [k,v] of Object.entries(src[c]||{})){ await putDoc(c,k,v); n++; } } }
+    logAct('กู้คืนข้อมูลจากไฟล์สำรอง',`${n} รายการ · ชุดวันที่ ${o.at}`); rebuild();
+    box.innerHTML=`<div class="syncnote ok">กู้คืนเรียบร้อย ${n} รายการ · ข้อมูลก่อนกู้คืนถูกสำรองไว้แล้ว</div>`; bkPending=null;
+  }catch(e){ box.innerHTML=`<div class="syncnote off">กู้คืนไม่สำเร็จ: ${esc(e.message||String(e))}</div>`; }
+}
+$('#bkIn').onchange=async e=>{ const f=e.target.files[0]; e.target.value=''; if(!f) return; try{ bkShowPreview(JSON.parse(await f.text()),'ไฟล์ '+f.name); }catch(err){ $('#bkPreview').hidden=false; $('#bkPreview').innerHTML='<div class="syncnote off">อ่านไฟล์ไม่ได้ ต้องเป็นไฟล์ .json ที่ได้จากปุ่มสำรองของระบบนี้</div>'; } };
+$('#bkList').onclick=async()=>{ const w=$('#bkDriveWrap'); w.hidden=false; $('#bkDriveTable tbody').innerHTML='<tr><td colspan="4" class="hint">กำลังโหลดรายการ…</td></tr>';
+  try{ const j=await gasCall({action:'listBackups'}); $('#bkDriveTable tbody').innerHTML=(j.items||[]).map(x=>`<tr><td>${esc(x.name)}</td><td class="hint">${thDate(x.at)}</td><td class="r num">${(x.size/1024).toFixed(0)} KB</td><td><button class="btn sm" data-bkid="${esc(x.id)}" data-bkname="${esc(x.name)}">กู้คืนชุดนี้</button></td></tr>`).join('')||'<tr><td colspan="4" class="hint">ยังไม่มีชุดสำรองใน Drive</td></tr>'; }
+  catch(e){ $('#bkDriveTable tbody').innerHTML=`<tr><td colspan="4" class="hint">${esc(e.message||String(e))}</td></tr>`; } };
+$('#bkDriveTable tbody').addEventListener('click',async e=>{ const b=e.target.closest('[data-bkid]'); if(!b) return; b.disabled=true; b.textContent='กำลังโหลด…'; try{ const j=await gasCall({action:'getBackup',id:b.dataset.bkid}); bkShowPreview(JSON.parse(j.json),'Google Drive · '+b.dataset.bkname); $('#bkPreview').scrollIntoView({behavior:'smooth',block:'center'}); }catch(err){ toast(err.message||String(err)); } finally{ b.disabled=false; b.textContent='กู้คืนชุดนี้'; } });
+setInterval(()=>{ if(!sess||!isAdmin()||store.mode!=='fb'||!gasUrl()||cfg().autoBackup===false||bkBusy) return; const lb=cfg().lastBackup; if(lb&&(Date.now()-new Date(lb.at))<7*864e5) return; bkToDrive(true); },60000);
 
 /* ---------- Google Drive (Apps Script) connection settings ---------- */
 async function gasTest(save){
@@ -1858,7 +1968,7 @@ function fbListen(q,fn){ const cb=q.on('value',s=>fn(s.val(),s),err=>{ toast(fbE
 function fbStart(){
   fbStop(); const adm=sess.role==='admin', fk=sess.facKey, R=p=>fb.db.ref(p);
   const one=n=>dec(n);
-  fbListen(R('calib/cfg'),v=>{ store.cfg.clear(); Object.entries(v||{}).forEach(([k,n])=>{ const d=one(n); if(d) store.cfg.set(k,d); }); renderSurvey(); if(!$('#v-users').hidden) renderUsers(); });
+  fbListen(R('calib/cfg'),v=>{ store.cfg.clear(); Object.entries(v||{}).forEach(([k,n])=>{ const d=one(n); if(d) store.cfg.set(k,d); }); renderSurvey(); if(!$('#v-data').hidden) renderBackup(); if(!$('#v-users').hidden) renderUsers(); });
   const setCapa=v=>{ Object.values(v||{}).forEach(n=>{ const d=one(n); if(d&&d.itemId) store.capa.set(docId(d.itemId),d); }); };
   if(adm){
     fbListen(R('calib/inv'),v=>{ store.inv.clear(); Object.entries(v||{}).forEach(([k,n])=>{ const d=one(n); if(d) store.inv.set(k,d); }); rebuildSoon(); });
@@ -1966,7 +2076,7 @@ function renderLive(){ renderCapa(); renderOverview(); if(!$('#v-facilities').hi
 let rbT=null; const rebuildSoon=()=>{clearTimeout(rbT); rbT=setTimeout(rebuild,60);};
 
 rebuild(); renderTargets(); dataQuality(); setNotes(); authInit();
-$('#footStamp').textContent='ปรับปรุงระบบ 6 ต.ค. 2569 · รุ่น Firebase 1.2';
+$('#footStamp').textContent='ปรับปรุงระบบ 17 พ.ย. 2569 · รุ่น 1.3';
 
 (async()=>{
   const c=window.claude;
